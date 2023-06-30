@@ -1,4 +1,4 @@
-# uch_project
-健行Java班作品_家用食物管理系統
+# uch project: squirrel-factory
+健行Java班作品_家用食物管理系統：松鼠der窩
 
 ### Hello Java
