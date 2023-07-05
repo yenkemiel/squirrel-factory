@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="fonts/icomoon/style.css">
+    <link rel="stylesheet" href="css/owl.carousel.min.css">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="css/bootstrap.min.css">    
+    <!-- Style -->
+    <link rel="stylesheet" href="css/style.css">
+    <title>Login 登入</title>
+  <!-- 引入axios套件，用來透過HTTP協定在網頁內呼叫後端的API -->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <!-- 引入Vue.js -->
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  </head>
+  <body>
+  <div class="d-lg-flex half">
+    <div class="bg order-1 order-md-2" style="background-image: url('images/bg_1.jpg');"></div>
+    <div class="contents order-2 order-md-1">
+      <div class="container">
+        <div class="row align-items-center justify-content-center">
+          <div class="col-md-7">
+            <h3>Login to <strong>Squirrel Factory</strong></h3>
+            <h3>歡迎光臨<strong>松鼠儲藏室</strong></h3>
+            <p class="mb-4">協助您管理家裡食物庫存的小幫手</p>
+            <form action="#" method="post">
+              <div class="form-group first">
+                <label for="username">Username使用者名稱</label>
+                <input type="text" class="form-control" placeholder="Your Username" id="username">
+              </div>
+              <div class="form-group last mb-3">
+                <label for="password">Password密碼</label>
+                <input type="password" class="form-control" placeholder="Your Password" id="password">
+              </div>          
+              <!--<div class="d-flex mb-5 align-items-center">
+                <label class="control control--checkbox mb-0"><span class="caption">Remember me</span>
+                  <input type="checkbox" checked="checked"/>
+                  <div class="control__indicator"></div>
+                
+                <span class="ml-auto"><a href="#" class="forgot-pass">Forgot Password忘記密碼</a></span> </label>>
+              </div></label>>-->
+              <input type="submit" value="Log In" class="btn btn-block btn-primary">
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>    
+  </div>
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <script src="js/popper.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/main.js"></script>
+  </body>
+  <script lang="javascript">
+    const {createApp} = Vue
+
+    // 建立Vue物件
+    createApp({
+        data() {
+          // 這裡出現的變數才可以在網頁內使用
+          return {
+            showWarning: false, // 開關警告訊息用
+            username: '', // 存放使用者帳號
+            password: '', // 存放使用者密碼
+          }
+        },
+        watch: {
+            // 監看username變數
+            username(newVal, oldVal) {
+                // 當帳號名稱已不再有單引號時，隱藏紅字
+                if(!newVal.includes('\'')) 
+                    this.showWarning = false;
+            }
+        },
+        // Vue的方法寫在這裡
+        methods: {
+            // 檢查帳號有沒有包含不允許的字元
+            checkAccount() {
+                console.log('checkAccount');
+
+                // 如果帳號名稱出現單引號，就顯示警告訊息
+                if(this.username.includes('\'') || 
+                   this.username.includes(' '))
+                    this.showWarning = true;
+                else
+                {
+                    // 送出表單
+                    // 這裡不用送出表單 this.$refs.form.submit();
+
+                    // 打API
+                    axios.get("/login?username=" + this.username + "&password=" + this.password)
+                    .then(   (response) => {
+                        // get完成後收到的資料可以在這裡處理
+                        console.log(response);
+                        
+                        if(response.data.code == 0) // 登入成功
+                            location.href = '/card.html';
+                        else // 登入失敗
+                            location.href = 'loginResult.html?message=' + response.data.message;
+                    })
+                    .catch( (error) => {
+                        console.log(error);
+                    });
+                }
+            }
+        }
+    }).mount('#app');
+ </script>
+  </html>

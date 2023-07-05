@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>食物管理</title>
+    <link rel="stylesheet" href="foodDetail-style.css">
+
+    <!-- 引入axios套件，用來透過HTTP協定在網頁內呼叫後端的API -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <!-- 引入Vue.js -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+
+<body id="app">
+    <!-- 這是對話視窗的開始 -->
+    <div class="table">
+        <h2 class="heading">
+            蘋果
+        </h2>
+        <div class="block">
+            <p>類別
+                <span class="price">水果
+                    <sub></sub>
+                </span>
+            <!-- <ul class="options">
+                <li>( 4 Sessions - 3 hrs per Session )</li>
+            </ul> -->
+            </p>
+        </div>
+        <div class="block">
+            <p>熱量
+                <span class="price">300
+                    <sub>卡</sub>
+                </span>
+            <!-- <ul class="options">
+                <li>( 8 Sessions - 3 hrs per Session )</li>
+            </ul> -->
+            </p>
+        </div>
+        <div class="block">
+            <p>蛋白質
+                <span class="price">1
+                    <sub>克</sub>
+                </span>
+            <ul class="options">
+                <li>蛋白質就是蛋白質</li>
+            </ul>
+            </p>
+        </div>
+        <div class="block">
+            <p>飽和脂肪
+                <span class="price">888
+                    <sub>克</sub>
+                </span>
+            <ul class="options">
+                <li>飽和脂肪吃太多不好</li>
+            </ul>
+            </p>
+        </div>
+        <div class="block">
+            <p>總碳水化合物
+                <span class="price">888
+                    <sub>克</sub>
+                </span>
+            <ul class="options">
+                <li>total_carbohydrates</li>
+            </ul>
+            </p>
+        </div>
+        <div class="block">
+            <p>膳食纖維
+                <span class="price">777
+                    <sub>克</sub>
+                </span>
+            <ul class="options">
+                <li>dietary fiber</li>
+            </ul>
+            </p>
+        </div>
+        <button class="btn">
+            <p>關閉</p>
+            <!-- <span class="fa fa-cart-plus" aria-hidden="true"></span> -->
+        </button>
+    </div>
+    <!-- 這是對話視窗的結束 -->
+</body>
+</html>

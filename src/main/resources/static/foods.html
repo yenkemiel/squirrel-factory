@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>食物管理</title>
+  <link rel="stylesheet" href="food-style.css">
+
+  <!-- 引入axios套件，用來透過HTTP協定在網頁內呼叫後端的API -->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+  <!-- 引入Vue.js -->
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+
+<body id="app">
+  <div class="btn" @click="onAdd">新增</div>
+  <table>
+    <thead>
+      <tr>
+        <th>名稱</th>
+        <th>類別</th>
+        <th>採購日</th>
+        <th>到期日</th>
+        <th>數量</th>
+      </tr>
+      <thead>
+      <tbody>
+        <tr v-for="item in foods">
+          <td>{{ item.name }}</td>
+          <td>{{ item.category }}</td>
+          <td>{{ item.buyDate }}</td>
+          <td>{{ item.expDate }}</td>
+          <td>{{ item.quantity }}</td>
+        </tr>
+      </tbody>
+  </table>
+  <blockquote> Responsive Table </blockquote>
+</body>
+
+<script>
+  // Vue初始化
+  const { createApp } = Vue
+
+  createApp({
+    data() {
+      // 網頁要使用的變數放這裡
+      return {
+        message: 'Hello Vue!',
+        foods: [],
+      }
+    },
+    // 當網頁載入完成後會被Vue框架呼叫
+    mounted() {
+      // 打API
+      axios.get("/foods")
+      .then(   (response) => {
+        // get完成後收到的資料可以在這裡處理
+        console.log(response);
+        // 將API的商品資料存到Vue建立的products變數
+        if(response.data.code == 0) {
+          // 將API拿到的data存到Vue變數
+          this.foods = response.data.data;
+        }
+      })
+      .catch( (error) => {
+        console.log(error);
+      });
+    },
+    // 網頁要用的方法寫在這裡
+    methods: {
+      // 新增資料
+      onAdd() {
+        alert('新增資料');
+      }
+    }
+  }).mount('#app')
+</script>
+</html>
