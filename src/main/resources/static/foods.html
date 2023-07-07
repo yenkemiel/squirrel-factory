@@ -1,117 +1,164 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-TW">
 
 <head>
   <meta charset="UTF-8">
   <title>食物管理</title>
   <link rel="stylesheet" href="food-style.css">
   <link rel="stylesheet" href="foodDetail-style.css">
+  <link rel="stylesheet" href="css/addFood.css">
 
   <!-- 引入axios套件，用來透過HTTP協定在網頁內呼叫後端的API -->
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
   <!-- 引入Vue.js -->
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+  <!-- 引入Element UI介面庫-->
+  <!-- Import style -->
+  <link rel="stylesheet" href="//unpkg.com/element-plus/dist/index.css" />
+  <!-- Import Vue 3 -->
+  <script src="//unpkg.com/vue@3"></script>
+  <!-- Import component library -->
+  <script src="//unpkg.com/element-plus"></script>
 </head>
 
 <body id="app">
-  <div class="btn" @click="onAdd">新增</div>
-  <table>
-    <thead>
-      <tr>
-        <th>名稱</th>
-        <th>類別</th>
-        <th>採購日</th>
-        <th>到期日</th>
-        <th>數量</th>
-      </tr>
+  <div class="container">
+    <el-button type="primary" class="btn" @click="showAddFoodModal = true">新增</el-button>
+
+    <table>
       <thead>
-      <tbody>
-        <tr v-for="item in foods">
-          <td @click="onShowDetail(item.id)" class="can-click">{{ item.name }}</td>
-          <td>{{ item.category }}</td>
-          <td>{{ item.buyDate }}</td>
-          <td>{{ item.expDate }}</td>
-          <td>{{ item.quantity }}</td>
+        <tr>
+          <th>名稱</th>
+          <th>類別</th>
+          <th>採購日</th>
+          <th>到期日</th>
+          <th>數量</th>
         </tr>
-      </tbody>
-  </table>
-  <blockquote> Responsive Table </blockquote>
+        <thead>
+        <tbody>
+          <tr v-for="item in foods">
+            <td @click="onShowFoodDetail(item.id)" class="can-click">{{ item.name }}</td>
+            <td>{{ item.category }}</td>
+            <td>{{ item.buyDate }}</td>
+            <td>{{ item.expDate }}</td>
+            <td>{{ item.quantity }}</td>
+          </tr>
+        </tbody>
+    </table>
 
-  <!-- 對話盒的淡黑色背景 -->
-  <div v-if="showFoodDetailModal" class="mask"></div>
+    <!-- 對話盒的淡黑色背景 -->
+    <div v-if="showFoodDetail" class="mask"></div>
 
-  <!-- 這是對話視窗的開始 -->
-  <div v-if="showFoodDetailModal" class="table">
-    <h2 class="heading">
-      {{ foodDetail.name }}
-    </h2>
-    <div class="block">
-      <p>類別
-        <span class="price">{{ foodDetail.category }}
-          <sub></sub>
-        </span>
-        <!-- <ul class="options">
-            <li>( 4 Sessions - 3 hrs per Session )</li>
-        </ul> -->
-      </p>
+    <!-- 這是對話視窗的開始 -->
+    <div v-if="showFoodDetail" class="table">
+      <h2 class="heading">
+        {{ foodDetail.name }}
+      </h2>
+      <div class="block">
+        <p>類別
+          <span class="price">{{ foodDetail.category }}
+            <sub></sub>
+          </span>
+        </p>
+      </div>
+      <div class="block">
+        <p>熱量
+          <span class="price">{{ foodDetail.calories}}
+            <sub>千卡</sub>
+          </span>
+        </p>
+      </div>
+      <div class="block">
+        <p>蛋白質
+          <span class="price">{{ foodDetail.protein }}
+            <sub>克</sub>
+          </span>
+        <ul class="descriptions">
+          <li>protein</li>
+        </ul>
+        </p>
+      </div>
+      <div class="block">
+        <p>飽和脂肪
+          <span class="price">{{ foodDetail.saturatedFat }}
+            <sub>克</sub>
+          </span>
+        <ul class="descriptions">
+          <li>saturated fat</li>
+        </ul>
+        </p>
+      </div>
+      <div class="block">
+        <p>總碳水化合物
+          <span class="price">{{ foodDetail.totalCarbohydrates }}
+            <sub>克</sub>
+          </span>
+        <ul class="descriptions">
+          <li>total_carbohydrates</li>
+        </ul>
+        </p>
+      </div>
+      <div class="block">
+        <p>膳食纖維
+          <span class="price">{{ foodDetail.dietaryFiber }}
+            <sub>克</sub>
+          </span>
+        <ul class="descriptions">
+          <li>dietary fiber</li>
+        </ul>
+        </p>
+      </div>
+      <button class="btn">
+        <p @click="showFoodDetail = false">關閉</p>
+        <!-- <span class="fa fa-cart-plus" aria-hidden="true"></span> -->
+      </button>
     </div>
-    <div class="block">
-      <p>熱量
-        <span class="price">{{ foodDetail.calories}}
-          <sub>千卡</sub>
-        </span>
-        <!-- <ul class="options">
-            <li>( 8 Sessions - 3 hrs per Session )</li>
-        </ul> -->
-      </p>
+    <!-- 這是對話視窗的結束 -->
+
+    <!-- 新增食物的對話盒開始-->
+    <div class="form" v-if="showAddFoodModal">
+      <div class="title">新增食物資料</div>
+      <div class="input-container ic1">
+        <input id="firstname" class="input" type="text" v-model="newFoodData.name" placeholder=" " />
+        <div class="cut"></div>
+        <label for="firstname" class="placeholder">食物名稱</label>
+      </div>
+
+      <!-- <div class="input-container ic2">
+			<input id="email" class="input" type="text" v-model="newFoodData.category" placeholder=" " />
+			<div class="cut cut-short"></div>
+			<label for="email" class="placeholder">種類</label>
+		</div> -->
+
+      <div class="input-container ic2">
+        <span class="add-food-title">種類&nbsp;&nbsp;</span>
+        <el-select v-model="newFoodData.category" class="m-2" placeholder="Select" size="large">
+          <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
+        </el-select>
+      </div>
+      <div class="input-container ic2">
+        <span class="add-food-title">採購日&nbsp;&nbsp;</span>
+        <el-date-picker v-model="newFoodData.buyDate" type="date" placeholder="Pick a day" :size="size" />
+      </div>
+      <div class="input-container ic2">
+        <span class="add-food-title">到期日&nbsp;&nbsp;</span>
+        <el-date-picker v-model="newFoodData.expDate" type="date" placeholder="Pick a day" :size="size" />
+      </div>
+
+
+      <div class="input-container ic2">
+        <input id="email" class="input" type="number" v-model="newFoodData.quantity" placeholder=" " />
+        <div class="cut cut-short"></div>
+        <label for="email" class="placeholder">數量</label>
+      </div>
+      <div class="btn-group">
+        <button type="text" class="submit" @click="showAddFoodModal = false">取消</button>
+        <button type="text" class="submit" @click="onAdd">送出</button>
+      </div>
     </div>
-    <div class="block">
-      <p>蛋白質
-        <span class="price">{{ foodDetail.protein }}
-          <sub>克</sub>
-        </span>
-      <ul class="options">
-        <li>protein</li>
-      </ul>
-      </p>
-    </div>
-    <div class="block">
-      <p>飽和脂肪
-        <span class="price">{{ foodDetail.saturatedFat }}
-          <sub>克</sub>
-        </span>
-      <ul class="options">
-        <li>saturated fat</li>
-      </ul>
-      </p>
-    </div>
-    <div class="block">
-      <p>總碳水化合物
-        <span class="price">{{ foodDetail.totalCarbohydrates }}
-          <sub>克</sub>
-        </span>
-      <ul class="options">
-        <li>total_carbohydrates</li>
-      </ul>
-      </p>
-    </div>
-    <div class="block">
-      <p>膳食纖維
-        <span class="price">{{ foodDetail.dietaryFiber }}
-          <sub>克</sub>
-        </span>
-      <ul class="options">
-        <li>dietary fiber</li>
-      </ul>
-      </p>
-    </div>
-    <button class="btn">
-      <p @click="showFoodDetailModal = false">關閉</p>
-      <!-- <span class="fa fa-cart-plus" aria-hidden="true"></span> -->
-    </button>
-  </div>
-  <!-- 這是對話視窗的結束 -->
+    <!-- 新增食物的對話盒結束 -->
 
 </body>
 
@@ -126,54 +173,166 @@
         message: 'Hello Vue!',
         foods: [],
         foodDetail: {},
-        showFoodDetailModal: false,
+        showFoodDetail: false,
+        showAddFoodModal: false,
+
+        options: [
+          {
+            value: '水果類',
+            label: '水果類',
+          },
+          {
+            value: '蔬菜類',
+            label: '蔬菜類',
+          },
+          {
+            value: '豆類',
+            label: '豆類',
+          },
+          {
+            value: '菇類',
+            label: '菇類',
+          },
+          {
+            value: '堅果及種子類',
+            label: '堅果及種子類',
+          },
+          {
+            value: '穀物類',
+            label: '穀物類',
+          },
+          {
+            value: '油脂類',
+            label: '油脂類',
+          },
+          {
+            value: '藻類',
+            label: '藻類',
+          },
+          {
+            value: '乳品類',
+            label: '乳品類',
+          },
+          {
+            value: '蛋類',
+            label: '蛋類',
+          },
+          {
+            value: '肉類',
+            label: '肉類',
+          },
+          {
+            value: '魚貝類',
+            label: '魚貝類',
+          },
+          {
+            value: '加工調理食品及其他類',
+            label: '加工調理食品及其他類',
+          },
+          {
+            value: '飲料類',
+            label: '飲料類',
+          },
+          {
+            value: '澱粉類',
+            label: '澱粉類',
+          },
+          {
+            value: '糖類',
+            label: '糖類',
+          },
+          {
+            value: '糕餅點心類',
+            label: '糕餅點心類',
+          },
+          {
+            value: '調味料及香辛料類',
+            label: '調味料及香辛料類',
+          },
+
+
+        ],
+
+        // 使用者的選擇種類會存在這邊
+        categoryValue: '種類',
+
+        newFoodData: {
+          name: '',
+          category: '',
+          buyDate: null,
+          expDate: null,
+          quantity: 0,
+        }
+
       }
     },
     // 當網頁載入完成後會被Vue框架呼叫
     mounted() {
-      // 打API
-      axios.get("/foods")
-        .then((response) => {
-          // get完成後收到的資料可以在這裡處理
-          console.log(response);
-          // 將API的商品資料存到Vue建立的products變數
-          if (response.data.code == 0) {
-            // 將API拿到的data存到Vue變數
-            this.foods = response.data.data;
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+      this.refresh();
     },
     // 網頁要用的方法寫在這裡
     methods: {
+      refresh() {
+        // 打API
+        axios.get("/foods")
+          .then((response) => {
+            // get完成後收到的資料可以在這裡處理
+            console.log(response);
+            // 將API的商品資料存到Vue建立的products變數
+            if (response.data.code == 0) {
+              // 將API拿到的data存到Vue變數
+              this.foods = response.data.data;
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      },
       // 新增資料
       onAdd() {
-        alert('新增資料');
+        // 將新增資料的對話盒顯示出來
+        console.log(JSON.stringify(this.newFoodData));
+
+        // 打API將資料送到後端
+        axios.post('/food', this.newFoodData)
+          .then((response) => {
+            console.log(response);
+            if (response.data.code == 0) {
+              this.$message.success('新增成功');
+              this.showAddFoodModal = false;
+              this.refresh();
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+            // 新增失敗
+
+            this.$message.error('新增失敗');
+          });
+
       },
       // 蔬果名稱被點擊時呼叫的方法
-      onShowDetail(food_id) {
+      onShowFoodDetail(food_id) {
         // 顯示食品詳細資訊的對話盒
-        this.showFoodDetailModal = true;
+        this.showFoodDetail = true;
         // alert('id=' + food_id + '被點擊了');
 
         axios.get("/foodDetail?id=" + food_id)
-        .then((response) => {
-          // get完成後收到的資料可以在這裡處理
-          console.log(response);
-          // 將API的商品資料存到Vue建立的products變數
-          if (response.data.code == 0) {
-            // 將API拿到的data存到Vue變數
-            this.foodDetail = response.data.data;
-          }
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+          .then((response) => {
+            // get完成後收到的資料可以在這裡處理
+            console.log(response);
+            // 將API的商品資料存到Vue建立的products變數
+            if (response.data.code == 0) {
+              // 將API拿到的data存到Vue變數
+              this.foodDetail = response.data.data;
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+          });
       }
     }
-  }).mount('#app')
+  }).use(ElementPlus).mount('#app')
 </script>
 
 </html>

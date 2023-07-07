@@ -1,0 +1,63 @@
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/addFood.css">
+  </head>
+  
+  <body>
+  <div class="form" v-if="showAddFoodModal">
+    <div class="title">新增食物資料</div>
+    <div class="input-container ic1">
+        <input id="foodname" class="input" type="text" v-model="newFoodData.name" placeholder=" " />
+        <div class="cut"></div>
+        <label for="firstname" class="placeholder">食物名稱</label>
+    </div>
+    <div class="input-container ic2">
+        <span class="add-food-title">種類&nbsp;&nbsp;</span>
+        <el-select v-model="newFoodData.platform" class="m-2" placeholder="Select" size="large">
+            <el-option
+              v-for="item in options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
+            />
+        </el-select>
+    </div>
+    <div class="input-container ic2">
+        <input id="category" class="input" type="text" v-model="newFoodData.category" placeholder=" " />
+        <div class="cut cut-short"></div>
+        <label for="email" class="placeholder">種類</label>
+    </div>
+     <div class="input-container ic2">
+        <span class="add-food-title">採購日&nbsp;&nbsp;</span>
+        <el-date-picker
+            v-model="newFoodData.buy_date"
+            type="date"
+            placeholder="Pick a day"
+            :size="size"
+        />
+    </div>
+    <div class="input-container ic2">
+        <span class="add-food-title">到期日&nbsp;&nbsp;</span>
+        <el-date-picker
+            v-model="newFoodData.outchange"
+            type="date"
+            placeholder="Pick a day"
+            :size="size"
+        />
+    </div>
+<div class="input-container ic2">
+  <input id="email" class="input" type="number" v-model="newFoodData.quantity" placeholder=" " />
+  <div class="cut cut-short"></div>
+  <label for="email" class="placeholder">數量</label>
+</div>
+    <div class="btn-group">
+        <button type="text" class="submit" @click="showAddFoodModal = false">取消</button>
+        <button type="text" class="submit" @click="onAdd">送出</button>
+    </div>
+</div>
+ 
+</body>
+</html>

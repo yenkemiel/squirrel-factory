@@ -40,6 +40,13 @@ table td.r, table th.r {
   text-align: center;
 }
 
+.container {
+  padding: 20px;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 1200px;
+}
+
 .btn {
   display: flex;
   width: 120px;
