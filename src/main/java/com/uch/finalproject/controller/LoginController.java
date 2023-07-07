@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.uch.finalproject.model.LoginResponse;
+import com.uch.finalproject.LoginResponse;
 
 @RestController
 public class LoginController {

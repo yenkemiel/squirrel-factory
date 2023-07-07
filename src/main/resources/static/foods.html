@@ -5,6 +5,7 @@
   <meta charset="UTF-8">
   <title>食物管理</title>
   <link rel="stylesheet" href="food-style.css">
+  <link rel="stylesheet" href="foodDetail-style.css">
 
   <!-- 引入axios套件，用來透過HTTP協定在網頁內呼叫後端的API -->
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
@@ -27,7 +28,7 @@
       <thead>
       <tbody>
         <tr v-for="item in foods">
-          <td>{{ item.name }}</td>
+          <td @click="onShowDetail(item.id)" class="can-click">{{ item.name }}</td>
           <td>{{ item.category }}</td>
           <td>{{ item.buyDate }}</td>
           <td>{{ item.expDate }}</td>
@@ -36,6 +37,82 @@
       </tbody>
   </table>
   <blockquote> Responsive Table </blockquote>
+
+  <!-- 對話盒的淡黑色背景 -->
+  <div v-if="showFoodDetailModal" class="mask"></div>
+
+  <!-- 這是對話視窗的開始 -->
+  <div v-if="showFoodDetailModal" class="table">
+    <h2 class="heading">
+      {{ foodDetail.name }}
+    </h2>
+    <div class="block">
+      <p>類別
+        <span class="price">{{ foodDetail.category }}
+          <sub></sub>
+        </span>
+        <!-- <ul class="options">
+            <li>( 4 Sessions - 3 hrs per Session )</li>
+        </ul> -->
+      </p>
+    </div>
+    <div class="block">
+      <p>熱量
+        <span class="price">{{ foodDetail.calories}}
+          <sub>千卡</sub>
+        </span>
+        <!-- <ul class="options">
+            <li>( 8 Sessions - 3 hrs per Session )</li>
+        </ul> -->
+      </p>
+    </div>
+    <div class="block">
+      <p>蛋白質
+        <span class="price">{{ foodDetail.protein }}
+          <sub>克</sub>
+        </span>
+      <ul class="options">
+        <li>protein</li>
+      </ul>
+      </p>
+    </div>
+    <div class="block">
+      <p>飽和脂肪
+        <span class="price">{{ foodDetail.saturatedFat }}
+          <sub>克</sub>
+        </span>
+      <ul class="options">
+        <li>saturated fat</li>
+      </ul>
+      </p>
+    </div>
+    <div class="block">
+      <p>總碳水化合物
+        <span class="price">{{ foodDetail.totalCarbohydrates }}
+          <sub>克</sub>
+        </span>
+      <ul class="options">
+        <li>total_carbohydrates</li>
+      </ul>
+      </p>
+    </div>
+    <div class="block">
+      <p>膳食纖維
+        <span class="price">{{ foodDetail.dietaryFiber }}
+          <sub>克</sub>
+        </span>
+      <ul class="options">
+        <li>dietary fiber</li>
+      </ul>
+      </p>
+    </div>
+    <button class="btn">
+      <p @click="showFoodDetailModal = false">關閉</p>
+      <!-- <span class="fa fa-cart-plus" aria-hidden="true"></span> -->
+    </button>
+  </div>
+  <!-- 這是對話視窗的結束 -->
+
 </body>
 
 <script>
@@ -48,32 +125,55 @@
       return {
         message: 'Hello Vue!',
         foods: [],
+        foodDetail: {},
+        showFoodDetailModal: false,
       }
     },
     // 當網頁載入完成後會被Vue框架呼叫
     mounted() {
       // 打API
       axios.get("/foods")
-      .then(   (response) => {
-        // get完成後收到的資料可以在這裡處理
-        console.log(response);
-        // 將API的商品資料存到Vue建立的products變數
-        if(response.data.code == 0) {
-          // 將API拿到的data存到Vue變數
-          this.foods = response.data.data;
-        }
-      })
-      .catch( (error) => {
-        console.log(error);
-      });
+        .then((response) => {
+          // get完成後收到的資料可以在這裡處理
+          console.log(response);
+          // 將API的商品資料存到Vue建立的products變數
+          if (response.data.code == 0) {
+            // 將API拿到的data存到Vue變數
+            this.foods = response.data.data;
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     },
     // 網頁要用的方法寫在這裡
     methods: {
       // 新增資料
       onAdd() {
         alert('新增資料');
+      },
+      // 蔬果名稱被點擊時呼叫的方法
+      onShowDetail(food_id) {
+        // 顯示食品詳細資訊的對話盒
+        this.showFoodDetailModal = true;
+        // alert('id=' + food_id + '被點擊了');
+
+        axios.get("/foodDetail?id=" + food_id)
+        .then((response) => {
+          // get完成後收到的資料可以在這裡處理
+          console.log(response);
+          // 將API的商品資料存到Vue建立的products變數
+          if (response.data.code == 0) {
+            // 將API拿到的data存到Vue變數
+            this.foodDetail = response.data.data;
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
       }
     }
   }).mount('#app')
 </script>
+
 </html>

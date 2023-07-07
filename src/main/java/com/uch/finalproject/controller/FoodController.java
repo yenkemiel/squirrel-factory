@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.uch.finalproject.model.FoodEntity;
-import com.uch.finalproject.model.FoodResponse;
+import com.uch.finalproject.FoodEntity;
+import com.uch.finalproject.FoodResponse;
 
 @RestController
 public class FoodController {
@@ -35,12 +35,13 @@ public class FoodController {
 
             stmt = conn.createStatement();
 
-            rs = stmt.executeQuery("select * from foods");
-
+            // ToDo: 改query:  select name, category, buy_date, exp_date, quantity  from foods f join food_detail fd where f.food_id = fd.id;
+            rs = stmt.executeQuery("select fd.food_id, name, category, buy_date, exp_date, quantity from food_stock f join food_detail fd on f.food_id = fd.food_id join category c on fd.category_no = c.category_no");
+            
             ArrayList<FoodEntity> foods = new ArrayList<>();
             while(rs.next()) {
                 FoodEntity foodEntity = new FoodEntity();
-                foodEntity.setId(rs.getInt("id"));
+                foodEntity.setId(rs.getInt("food_id"));
                 foodEntity.setName(rs.getString("name"));
                 foodEntity.setCategory(rs.getString("category"));
                 foodEntity.setBuyDate(rs.getDate("buy_date"));

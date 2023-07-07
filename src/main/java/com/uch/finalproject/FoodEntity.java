@@ -1,4 +1,4 @@
-package com.uch.finalproject.model;
+package com.uch.finalproject;
 
 import java.sql.Date;
 

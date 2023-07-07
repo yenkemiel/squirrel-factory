@@ -43,7 +43,7 @@ public class ProductController {
             stmt = conn.createStatement();
 
             // 查詢全部商品
-            rs = stmt.executeQuery("select * from product");
+            rs = stmt.executeQuery("select food_id, name, category, calories,protein, saturated_fat, total_carbohydrates, dietary_fiber from food_detail fd join category c on fd.category_no=c.category_no where food_id =");
 
             // 建立陣列存放所有商品用
             ArrayList<ProductEntity> products = new ArrayList<>();

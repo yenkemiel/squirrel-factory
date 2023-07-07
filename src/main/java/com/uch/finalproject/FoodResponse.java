@@ -1,4 +1,4 @@
-package com.uch.finalproject.model;
+package com.uch.finalproject;
 
 import java.util.ArrayList;
 
@@ -13,4 +13,5 @@ public class FoodResponse extends BaseResponse {
 
         this.data = data;
     }
+
 }
