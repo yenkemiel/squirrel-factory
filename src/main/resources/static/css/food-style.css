@@ -4,7 +4,6 @@ table {
   background: white;
   border-radius: 6px;
   overflow: hidden;
-  max-width: 800px;
   width: 100%;
   margin: 0 auto;
   position: relative;
@@ -118,4 +117,25 @@ body {
 blockquote {
   color: white;
   text-align: center;
+}
+
+.material-symbols-outlined {
+
+	cursor: pointer;
+	border: 2px solid #777D46;	
+  background-color:  #777D46;
+  color: white; 
+  margin:2px;
+  border-radius: 6px;  
+  font-variation-settings:
+  'FILL' 0,
+  'wght' 400,
+  'GRAD' 0,
+  'opsz' 24
+	}
+
+.material-symbols-outlined:hover {
+  border: 2px solid #777D46;
+  background-color: #777D46;
+  color: white;  
 }

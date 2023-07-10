@@ -12,10 +12,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.uch.finalproject.FoodDetailEntity;
-import com.uch.finalproject.FoodDetailResponse;
-import com.uch.finalproject.FoodEntity;
-import com.uch.finalproject.FoodResponse;
+import com.uch.finalproject.model.FoodDetailEntity;
+import com.uch.finalproject.model.FoodDetailResponse;
+import com.uch.finalproject.model.FoodEntity;
+import com.uch.finalproject.model.FoodResponse;
 
 @RestController
 public class FoodDetailController {

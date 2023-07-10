@@ -1,3 +1,4 @@
+
 package com.uch.finalproject.controller;
 
 import java.sql.Connection;
@@ -11,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.uch.finalproject.LoginResponse;
+import com.uch.finalproject.model.LoginResponse;
 
 @RestController
 public class LoginController {

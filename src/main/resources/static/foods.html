@@ -4,9 +4,10 @@
 <head>
   <meta charset="UTF-8">
   <title>食物管理</title>
-  <link rel="stylesheet" href="food-style.css">
-  <link rel="stylesheet" href="foodDetail-style.css">
+  <link rel="stylesheet" href="css/food-style.css">
+  <link rel="stylesheet" href="css/foodDetail-style.css">
   <link rel="stylesheet" href="css/addFood.css">
+  
 
   <!-- 引入axios套件，用來透過HTTP協定在網頁內呼叫後端的API -->
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
@@ -35,15 +36,39 @@
           <th>採購日</th>
           <th>到期日</th>
           <th>數量</th>
+          <th>變更</th>
         </tr>
         <thead>
         <tbody>
-          <tr v-for="item in foods">
+          <tr v-for="(item, index) in foods">
             <td @click="onShowFoodDetail(item.id)" class="can-click">{{ item.name }}</td>
             <td>{{ item.category }}</td>
-            <td>{{ item.buyDate }}</td>
-            <td>{{ item.expDate }}</td>
-            <td>{{ item.quantity }}</td>
+            <td>
+              <div v-if="!showEditMode[index]">{{ item.buyDate }}</div>
+              <el-date-picker v-else v-model="foods[index].buyDate" type="date" placeholder="Pick a day" :size="size" />
+            </td>
+            <td>
+              <div v-if="!showEditMode[index]">{{ item.expDate }}</div>
+              <el-date-picker v-else v-model="foods[index].expDate" type="date="placeholder="Pick a day" :size="size" />
+              </td>
+            <td>
+              <div v-if="!showEditMode[index]">{{ item.quantity }}</div>
+              <el-input-number v-else v-model="foods[index].quantity" @change="handleChange" />
+              </td>            
+            <td>
+              <span v-if="!showEditMode[index]" class="material-symbols-outlined" @click="showEditMode[index] = true">
+                編輯
+              </span>
+              <span v-if="!showEditMode[index]" class="material-symbols-outlined">
+                刪除
+              </span>
+              <span v-if="showEditMode[index]" class="material-symbols-outlined" @click="onUpdate(index)">
+                確定
+              </span>
+              <span v-if="showEditMode[index]" class="material-symbols-outlined" @click="showEditMode[index] = false">
+                取消
+              </span>
+            </td>
           </tr>
         </tbody>
     </table>
@@ -56,11 +81,14 @@
       <h2 class="heading">
         {{ foodDetail.name }}
       </h2>
-      <div class="block">
+      <div class="blockTitle">
         <p>類別
           <span class="price">{{ foodDetail.category }}
             <sub></sub>
           </span>
+          <ul class="options">
+            <li>(每百克食物含量)</li>
+        </ul>
         </p>
       </div>
       <div class="block">
@@ -68,6 +96,9 @@
           <span class="price">{{ foodDetail.calories}}
             <sub>千卡</sub>
           </span>
+          <ul class="options">
+            <li>根據衛服部國民健康署建議，體重正常者，每日熱量需求為體重(kg) * 30大卡(輕度活動) / 35大卡(中度活動) / 40大卡(重度活動)。</li>
+          </ul>
         </p>
       </div>
       <div class="block">
@@ -75,9 +106,9 @@
           <span class="price">{{ foodDetail.protein }}
             <sub>克</sub>
           </span>
-        <ul class="descriptions">
-          <li>protein</li>
-        </ul>
+          <ul class="options">
+            <li>指粗蛋白crude protein。</li>
+          </ul>
         </p>
       </div>
       <div class="block">
@@ -85,9 +116,9 @@
           <span class="price">{{ foodDetail.saturatedFat }}
             <sub>克</sub>
           </span>
-        <ul class="descriptions">
-          <li>saturated fat</li>
-        </ul>
+          <ul class="options">
+            <li>一般認為飲食中比例較高的飽和脂肪酸會增加心血管疾病和中風的風險，但是近年來有越來越多研究顯示，飽和脂肪酸有降低體脂和心血管疾病發病率的作用。</li>
+          </ul>
         </p>
       </div>
       <div class="block">
@@ -95,9 +126,9 @@
           <span class="price">{{ foodDetail.totalCarbohydrates }}
             <sub>克</sub>
           </span>
-        <ul class="descriptions">
-          <li>total_carbohydrates</li>
-        </ul>
+          <ul class="options">
+            <li>碳水化合物即醣類。醣類的眾多衍生物與免疫系統、預防疾病、血液凝固和生長等有極大的關聯。</li>
+          </ul>
         </p>
       </div>
       <div class="block">
@@ -105,9 +136,10 @@
           <span class="price">{{ foodDetail.dietaryFiber }}
             <sub>克</sub>
           </span>
-        <ul class="descriptions">
-          <li>dietary fiber</li>
-        </ul>
+          <ul class="options">
+            <li>根據世界衛生組織建議，每人每天攝入25g-35g膳食纖維，有助於預防心血管疾病、糖尿病及其他一系列健康問題。</li>
+          </ul>
+    
         </p>
       </div>
       <button class="btn">
@@ -146,8 +178,6 @@
         <span class="add-food-title">到期日&nbsp;&nbsp;</span>
         <el-date-picker v-model="newFoodData.expDate" type="date" placeholder="Pick a day" :size="size" />
       </div>
-
-
       <div class="input-container ic2">
         <input id="email" class="input" type="number" v-model="newFoodData.quantity" placeholder=" " />
         <div class="cut cut-short"></div>
@@ -262,17 +292,20 @@
           buyDate: null,
           expDate: null,
           quantity: 0,
-        }
+        },
+
+        	// 編輯模式下顯示數量欄位用
+				showEditMode: [],
 
       }
     },
     // 當網頁載入完成後會被Vue框架呼叫
     mounted() {
-      this.refresh();
+      this.onGet();
     },
     // 網頁要用的方法寫在這裡
     methods: {
-      refresh() {
+      onGet() {
         // 打API
         axios.get("/foods")
           .then((response) => {
@@ -300,7 +333,9 @@
             if (response.data.code == 0) {
               this.$message.success('新增成功');
               this.showAddFoodModal = false;
-              this.refresh();
+              this.onGet();
+              //this.showEditMode[index] = false;
+            
             }
           })
           .catch((error) => {
@@ -330,7 +365,29 @@
           .catch((error) => {
             console.log(error);
           });
-      }
+      },
+      onUpdate(index) {
+				// 將新增資料的對話盒顯示出來
+				console.log(JSON.stringify(this.foods[index]));
+
+				// 打API將資料送到後端
+				axios.put('/food', this.foods[index])
+					.then((response) => {
+						console.log(response);
+						if (response.data.code == 0) {
+							this.$message.success('更新成功');
+							this.showEditMode[index] = false;
+							this.onGet();
+						}
+					})
+					.catch((error) => {
+						console.log(error);
+						// 新增失敗
+						
+						this.$message.error('更新失敗');
+					});
+			}
+
     }
   }).use(ElementPlus).mount('#app')
 </script>
