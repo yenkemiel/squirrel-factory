@@ -109,6 +109,31 @@ public class FoodController {
         }
     }
 
+    @RequestMapping(value = "/delfood", method = RequestMethod.DELETE,
+            consumes = MediaType.APPLICATION_JSON_VALUE,  // 傳入的資料格式
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public BaseResponse deleteFood(@RequestBody FoodEntity data) {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+
+        try{
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            conn = DriverManager.getConnection("jdbc:mysql://localhost/foods?user=root&password=0000");
+
+            stmt = conn.prepareStatement("DELETE FROM food_stock WHERE stock_id = ?");
+            stmt.setInt(1, data.getStockId());
+
+            stmt.executeUpdate();
+            
+            return new BaseResponse(0, "刪除成功");
+
+        }catch(SQLException e) {
+            return new BaseResponse(e.getErrorCode(), e.getMessage());
+        }catch(ClassNotFoundException e) {
+            return new BaseResponse(1,"無法註冊驅動程式");
+        }
+    }
+
     private FoodResponse getFoodList() {
         Connection conn = null;
         Statement stmt = null;

@@ -46,7 +46,7 @@ public class FoodDetailController {
                 return new FoodDetailResponse(2, "無此資料, id=" + id, null);
             } else {
                 FoodDetailEntity foodDetailEntity = new FoodDetailEntity();
-                foodDetailEntity.setId(rs.getInt("food_id"));
+                foodDetailEntity.setFoodId(rs.getInt("food_id"));
                 foodDetailEntity.setName(rs.getString("name"));
                 foodDetailEntity.setCategory(rs.getString("category"));
                 foodDetailEntity.setCalories(rs.getInt("calories"));

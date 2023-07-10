@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class FoodDetailEntity {
-    int id;
+    int foodId;
     String name;
     String category;
     int calories;
