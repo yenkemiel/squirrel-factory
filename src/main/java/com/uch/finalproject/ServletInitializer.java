@@ -3,8 +3,6 @@ package com.uch.finalproject;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 
-import com.uch.finalproject.model.FinalprojectApplication;
-
 public class ServletInitializer extends SpringBootServletInitializer {
 
 	@Override
