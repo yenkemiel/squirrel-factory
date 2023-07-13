@@ -2252,11 +2252,7 @@ INSERT INTO `food_detail` (`food_id`, `name`, `category_no`, `calories`, `protei
 (2147, '鹽酥葵瓜子(帶殼)', 1005, 558, 25.9, 5.7, 17.8, 8.1),
 (2148, '鹽酥蠶豆', 1003, 409, 26.9, 6.4, 46.3, 23.1),
 (2149, '鹽漬小鱗脂眼鯡(鹹馧仔)', 3002, 228, 17.4, 3.5, 0.3, 0),
-(2150, '鱷形叉尾鶴鱵', 3002, 98, 22.4, 0.1, 0.1, 0),
-(2152, '測試豆', 1003, NULL, NULL, NULL, NULL, NULL),
-(2153, '好吃果', 1001, 1, 122, 123, 124, 125),
-(2154, '測試豆123', 1003, 0, 0, 0, 0, 0),
-(2155, '人心果33333', 1003, 0, 3, 3, 3, 3);
+(2150, '鱷形叉尾鶴鱵', 3002, 98, 22.4, 0.1, 0.1, 0);
 
 -- --------------------------------------------------------
 
@@ -2277,40 +2273,20 @@ CREATE TABLE `food_stock` (
 --
 
 INSERT INTO `food_stock` (`stock_id`, `food_id`, `buy_date`, `exp_date`, `quantity`) VALUES
-(2, 752, '2023-06-01', '2023-06-06', 4),
-(3, 866, '2023-06-02', '2023-06-10', 3),
-(4, 940, '2023-06-30', '2023-07-01', 2),
+(1, 98, '2023-07-01', '2023-07-15', 6),
+(2, 752, '2023-06-20', '2023-06-27', 6),
+(3, 866, '2023-06-05', '2023-06-12', 6),
+(4, 940, '2023-07-02', '2023-07-04', 1),
 (5, 1941, '2023-07-02', '2023-07-04', 1),
 (6, 1544, '2023-06-15', '2023-06-30', 2),
-(7, 719, '2023-06-21', '2023-07-05', 2),
+(7, 719, '2023-06-21', '2023-07-05', 1),
 (8, 1439, '2023-07-01', '2023-07-08', 1),
 (9, 85, '2023-07-02', '2023-07-31', 1),
 (10, 837, '2023-07-02', '2023-07-09', 1),
 (11, 891, '2023-07-02', '2023-07-09', 1),
 (12, 1379, '2023-07-03', '2023-07-17', 10),
-(15, 9, '2023-06-01', '2023-06-06', 5),
-(31, 922, '2023-07-06', '2023-07-20', 6),
-(32, 2151, '2023-07-06', '2023-07-20', 1),
-(36, 2152, '2023-07-09', '2023-07-16', 1),
-(38, 2152, '2023-07-01', '2023-07-15', 2);
-
--- --------------------------------------------------------
-
---
--- 資料表結構 `food_tobuy`
---
-
-CREATE TABLE `food_tobuy` (
-  `tobuy_id` int(11) NOT NULL,
-  `food_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
-
---
--- 傾印資料表的資料 `food_tobuy`
---
-
-INSERT INTO `food_tobuy` (`tobuy_id`, `food_id`) VALUES
-(1, 1);
+(13, NULL, '2023-07-11', '2023-07-11', 11),
+(14, NULL, '2023-07-19', '2023-07-18', 11);
 
 --
 -- 已傾印資料表的索引
@@ -2343,13 +2319,6 @@ ALTER TABLE `food_stock`
   ADD KEY `food_id` (`food_id`);
 
 --
--- 資料表索引 `food_tobuy`
---
-ALTER TABLE `food_tobuy`
-  ADD PRIMARY KEY (`tobuy_id`),
-  ADD KEY `food_id` (`food_id`);
-
---
 -- 在傾印的資料表使用自動遞增(AUTO_INCREMENT)
 --
 
@@ -2363,19 +2332,13 @@ ALTER TABLE `account`
 -- 使用資料表自動遞增(AUTO_INCREMENT) `food_detail`
 --
 ALTER TABLE `food_detail`
-  MODIFY `food_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2156;
+  MODIFY `food_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2151;
 
 --
 -- 使用資料表自動遞增(AUTO_INCREMENT) `food_stock`
 --
 ALTER TABLE `food_stock`
-  MODIFY `stock_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
-
---
--- 使用資料表自動遞增(AUTO_INCREMENT) `food_tobuy`
---
-ALTER TABLE `food_tobuy`
-  MODIFY `tobuy_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `stock_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- 已傾印資料表的限制式
@@ -2387,12 +2350,6 @@ ALTER TABLE `food_tobuy`
 ALTER TABLE `food_detail`
   ADD CONSTRAINT `food_detail_ibfk_1` FOREIGN KEY (`category_no`) REFERENCES `category` (`category_no`),
   ADD CONSTRAINT `food_detail_ibfk_2` FOREIGN KEY (`category_no`) REFERENCES `category` (`category_no`);
-
---
--- 資料表的限制式 `food_tobuy`
---
-ALTER TABLE `food_tobuy`
-  ADD CONSTRAINT `food_tobuy_ibfk_1` FOREIGN KEY (`food_id`) REFERENCES `food_detail` (`food_id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

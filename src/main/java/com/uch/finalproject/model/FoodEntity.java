@@ -1,7 +1,6 @@
 package com.uch.finalproject.model;
 
 import java.sql.Date;
-import java.util.ArrayList;
 
 import lombok.Data;
 
@@ -14,7 +13,6 @@ public class FoodEntity {
     Date buyDate;
     Date expDate;
     int quantity;
-    ArrayList<FoodEntity> foods;
-    int total;
+
 }
 
