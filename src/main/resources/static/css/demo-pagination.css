@@ -4,8 +4,10 @@ table {
   background: white;
   border-radius: 6px;
   overflow: hidden;
+  max-width: 1200px;
   width: 100%;
   margin: 0 auto;
+  margin-bottom: 10px;
   position: relative;
 }
 table * {
@@ -18,7 +20,6 @@ table thead tr {
   height: 60px;
   background: #FFED86;
   font-size: 16px;
-  text-align: center;
 }
 table tbody tr {
   height: 48px;
@@ -28,7 +29,7 @@ table tbody tr:last-child {
   border: 0;
 }
 table td, table th {
-  text-align: left;
+  text-align: center;
 }
 table td.l, table th.l {
   text-align: right;
@@ -40,18 +41,15 @@ table td.r, table th.r {
   text-align: center;
 }
 
-.container {
-  padding: 20px;
-  margin: 0 auto;
-  width: 100%;
-  max-width: 1200px;
+.arrow-down {
+  transform: rotate(180deg);
 }
 
 .btn {
   display: flex;
   width: 120px;
   height: 36px;
-  background-color: #9BC86A;
+  background-color:#777D46;
   color: white;
   margin-bottom: 15px;
   align-items: center;
@@ -118,35 +116,4 @@ body {
 blockquote {
   color: white;
   text-align: center;
-}
-
-.material-symbols-outlined {
-
-	cursor: pointer;
-	border: 2px solid #777D46;	
-  background-color:  #777D46;
-  color: white; 
-  margin:2px;
-  border-radius: 6px;  
-  font-variation-settings:
-  'FILL' 0,
-  'wght' 400,
-  'GRAD' 0,
-  'opsz' 24
-	}
-
-.material-symbols-outlined:hover {
-  border: 2px solid #777D46;
-  background-color: #777D46;
-  color: white;  
-}
-
-.header {
-  display: flex;
-  flex-direction: row;
-  position: relative;
-  
-  width: 100%;
-  justify-content: center;
-  align-items: center;
 }

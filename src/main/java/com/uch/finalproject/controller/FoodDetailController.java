@@ -5,7 +5,6 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
 
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,8 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.uch.finalproject.model.FoodDetailEntity;
 import com.uch.finalproject.model.FoodDetailResponse;
-import com.uch.finalproject.model.FoodEntity;
-import com.uch.finalproject.model.FoodResponse;
 
 @RestController
 public class FoodDetailController {
@@ -33,7 +30,6 @@ public class FoodDetailController {
             Class.forName("com.mysql.cj.jdbc.Driver");
 
             conn = DriverManager.getConnection("jdbc:mysql://localhost/foods?user=root&password=0000");
-
             stmt = conn.createStatement();
 
             // ToDo: 改query:  select name, category, buy_date, exp_date, quantity  from foods f join food_detail fd where f.food_id = fd.id;

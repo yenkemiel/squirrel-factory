@@ -7,30 +7,28 @@
 }
 
 body {
-  background: #21ac70;
+  background:  #9BC86A;
   font-family: "Poppins", sans-serif;
 }
 
 .big-heading {
   color: #fff;
   text-align: center;
-  font-size: 26pt;
+  font-size: 40pt;
   padding: 20px;
   text-transform: capitalize;
+  text-align: center;
 }
 
 .table {
   background: #fff;
-  width: 27%;
-  height: auto;
+  width: 30%;
+  height: 90%;  
   display: block;
-  float: left;
-  
+  float: left;  
   /* left: 6%; */
   /* margin: 20px; */
-  
   top: 50px;
-
   /* 將對話盒置中用 - start */
   position: fixed;
   left: 0;
@@ -38,10 +36,8 @@ body {
   margin-left: auto;
   margin-right: auto;
   /* 將對話盒置中用 - end */
-
   border-radius: 8px;
-  
-  overflow: hidden;
+  overflow: scroll;
   /* -moz-box-shadow: 0px 0px 0px rgba(0, 0, 0, 0);
   -webkit-box-shadow: 0px 0px 0px rgba(0, 0, 0, 0); */
   box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);

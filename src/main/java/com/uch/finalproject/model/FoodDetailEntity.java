@@ -6,6 +6,7 @@ import lombok.Data;
 public class FoodDetailEntity {
     int foodId;
     String name;
+    int categoryNo;
     String category;
     int calories;
     float protein;

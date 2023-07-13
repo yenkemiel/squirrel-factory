@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+ 
+<head>
+  <meta charset="UTF-8">
+  <title>食物營養資訊管理</title>
+  <link rel="stylesheet" href="css/food-style.css">
+  <link rel="stylesheet" href="css/foodDetail-style.css">
+  <link rel="stylesheet" href="css/addFood.css">
+  <!-- 引入axios套件，用來透過HTTP協定在網頁內呼叫後端的API -->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+  <!-- 引入Vue.js -->
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+  <!-- 引入Element UI介面庫-->
+  <!-- Import style -->
+  <link rel="stylesheet" href="//unpkg.com/element-plus/dist/index.css" />
+  <!-- Import Vue 3 -->
+  <script src="//unpkg.com/vue@3"></script>
+  <!-- Import component library -->
+  <script src="//unpkg.com/element-plus"></script>
+</head>
+
+<body id="app">
+<div class="container">
+  <el-button type="warning" class="btn" @click="showAddFoodDetailModal = true">新增</el-button>
+  <div class="header">
+    <h2>每百公克食物資訊</h2>
+  </div>
+  <table>
+      <thead>
+      <tr>
+        <th>編號</th>
+        <th>名稱</th>
+        <th>類別編號</th>
+        <th>類別</th>
+        <th style="display: flex; height: 60px; align-items: center; justify-content: center;"
+          @click="onChangeCaloriesMode">
+          熱量(大卡)<div v-if="caloriesArrowMode != 0" :class="[caloriesArrowMode == 1 ? '':'arrow-down']">⯅</div>
+        </th>
+        <th>蛋白質(g)</th>
+        <th>飽和脂肪(g)</th>
+        <th>總碳水化合物(g)</th>
+        <th>膳食纖維(g)</th>
+        <th>變更</th>
+      </tr>
+      <thead>
+      <tbody>
+        <tr v-for="(item, index) in foods">
+          <td>{{ item.foodId }}</td>
+          <td>{{ item.name }}</td>
+          <td>{{ item.categoryNo }}</td>
+          <td>{{ item.category }}</td>
+          <td>
+          <div v-if="!showEditMode[index]">{{ item.calories }}</div>
+            <el-input-number v-else v-model="foods[index].calories" @change="handleChange" />
+          </td>            
+
+          <td>
+          <div v-if="!showEditMode[index]">{{ item.protein }}</div>
+            <el-input-number v-else v-model="foods[index].protein" @change="handleChange" />
+          </td>            
+
+          <td>
+          <div v-if="!showEditMode[index]">{{ item.saturatedFat }}</div>
+            <el-input-number v-else v-model="foods[index].saturatedFat" @change="handleChange" />
+          </td>            
+
+          <td>
+            <div v-if="!showEditMode[index]">{{ item.totalCarbohydrates }}</div>
+            <el-input-number v-else v-model="foods[index].totalCarbohydrates" @change="handleChange" />
+          </td>            
+          
+          <td>
+            <div v-if="!showEditMode[index]">{{ item.dietaryFiber }}</div>
+            <el-input-number v-else v-model="foods[index].dietaryFiber" @change="handleChange" />
+            </td>            
+
+          <td>
+            <span v-if="!showEditMode[index]" class="material-symbols-outlined" @click="showEditMode[index] = true">
+              編輯
+            </span>
+            <span @click="onDelete(item.stockId)" v-if="!showEditMode[index]" class="material-symbols-outlined">
+              刪除
+            </span>
+            <span v-if="showEditMode[index]" class="material-symbols-outlined" @click="onUpdate(index)">
+              確定
+            </span>
+            <span v-if="showEditMode[index]" class="material-symbols-outlined" @click="showEditMode[index] = false">
+              取消
+            </span>
+          </td>
+        </tr>
+      </tbody>
+  </table>
+
+<!-- 對話盒的淡黑色背景 -->
+<div v-if="showAddFoodDetailModal" class="mask"></div>
+
+
+<!-- 新增食物營養資訊的對話盒開始 -->
+<div class="form" v-if="showAddFoodDetailModal">
+  <div class="title">新增食物營養資訊資料</div>
+  
+  <div class="input-container ic1">
+    <input id="firstname" class="input" type="text" v-model="newFoodDetailData.name" placeholder=" " />
+      <div class="cut"></div>
+    <label for="firstname" class="placeholder">名稱</label>
+  </div>
+ 
+  <div class="input-container ic2">
+  <span class="add-food-title">種類&nbsp;&nbsp;</span>
+  <el-select v-model="newFoodDetailData.category" class="m-2" placeholder="Select" size="large">
+    <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
+  </el-select>
+  </div>
+
+  <div class="input-container ic2">
+    <input id="email" class="input" type="number" v-model="newFoodDetailData.calories" placeholder=" " />
+    <div class="cut cut-short"></div>
+    <label for="email" class="placeholder">卡路里</label>
+  </div>
+  <div class="input-container ic2">
+    <input id="email" class="input" type="float" v-model="newFoodDetailData.protein" placeholder=" " />
+    <div class="cut cut-short"></div>
+    <label for="email" class="placeholder">蛋白質</label>
+  </div>
+  <div class="input-container ic2">
+    <input id="email" class="input" type="float" v-model="newFoodDetailData.saturatedFat" placeholder=" " />
+    <div class="cut cut-short"></div>
+    <label for="email" class="placeholder">飽和脂肪</label>
+  </div>
+  <div class="input-container ic2">
+    <input id="email" class="input" type="float" v-model="newFoodDetailData.totalCarbohydrates" placeholder=" " />
+    <div class="cut cut-short"></div>
+    <label for="email" class="placeholder">總碳水化合物</label>
+  </div><div class="input-container ic2">
+    <input id="email" class="input" type="float" v-model="newFoodDetailData.dietaryFiber" placeholder=" " />
+    <div class="cut cut-short"></div>
+    <label for="email" class="placeholder">膳食纖維</label>
+  </div>
+  <div class="btn-group">
+    <button type="text" class="submit" @click="showAddFoodDetailModal = false">取消</button>
+    <button type="text" class="submit" @click="onAdd">送出</button>
+  </div>
+</div>
+<!-- 新增食物營養資訊的對話盒結束 -->
+
+<!-- @size-change事件: 重新打API要資料，把目前頁數設定回第一頁-->
+  <el-pagination background layout="prev, pager, next, sizes" 
+      :total="total" 
+      :page-sizes="[12, 24, 50, 100]"
+      style="justify-content: center;"
+      @size-change="onSizeChange"  
+      @current-change="onCurrentChange" 
+      @prev-click="onPrevClick" 
+      @next-click="onNextClick"
+      v-model:current-page="currentPage" 
+      v-model:page-size="pageSize" />
+
+
+
+</body>
+
+<script type="module">
+
+  // Vue初始化
+  const { createApp } = Vue
+
+  createApp({
+    data() {
+      // 網頁要使用的變數放這裡
+      return {
+        message: 'Hello Vue!',
+        foods: [],
+        showAddFoodDetailModal: false,
+
+        currentPage: 1,  // 目前在哪一頁
+        pageSize: 12,
+        total: 0,
+        caloriesArrowMode: 0, // 0=不排序, 1=由大到小, 2=由小到大
+
+
+      // 使用者的選擇種類會存在這邊
+       //categoryValue: '種類',
+       options: [
+          {
+            value: '水果類',
+            label: '水果類',
+          },
+          {
+            value: '蔬菜類',
+            label: '蔬菜類',
+          },
+          {
+            value: '豆類',
+            label: '豆類',
+          },
+          {
+            value: '菇類',
+            label: '菇類',
+          },
+          {
+            value: '堅果及種子類',
+            label: '堅果及種子類',
+          },
+          {
+            value: '穀物類',
+            label: '穀物類',
+          },
+          {
+            value: '油脂類',
+            label: '油脂類',
+          },
+          {
+            value: '藻類',
+            label: '藻類',
+          },
+          {
+            value: '乳品類',
+            label: '乳品類',
+          },
+          {
+            value: '蛋類',
+            label: '蛋類',
+          },
+          {
+            value: '肉類',
+            label: '肉類',
+          },
+          {
+            value: '魚貝類',
+            label: '魚貝類',
+          },
+          {
+            value: '加工調理食品及其他類',
+            label: '加工調理食品及其他類',
+          },
+          {
+            value: '飲料類',
+            label: '飲料類',
+          },
+          {
+            value: '澱粉類',
+            label: '澱粉類',
+          },
+          {
+            value: '糖類',
+            label: '糖類',
+          },
+          {
+            value: '糕餅點心類',
+            label: '糕餅點心類',
+          },
+          {
+            value: '調味料及香辛料類',
+            label: '調味料及香辛料類',
+          },
+        ],
+      // 使用者新增的營養資訊會存在這邊
+        newFoodDetailData: {
+        name: '',
+        category: '',
+        calories: null,
+        protein: null,
+        saturatedFat: null,
+        totalCarbohydrates: null,
+        dietaryFiber: null,
+        },
+
+        // 編輯模式下顯示數量欄位用
+				showEditMode: [],
+        deleteDataIndex: {
+        stockId :'',
+        },
+      }
+    },
+    // watch: {
+    //   currentPage(newVal, oldVal) {
+    //     // alert(newVal);
+    //   },
+    //   pageSize(newVal, oldVal) {
+    //     // alert(newVal);
+    //   },
+    // },
+    // 當網頁載入完成後會被Vue框架呼叫
+    mounted() {
+      this.onGet();
+    },
+    // 網頁要用的方法寫在這裡
+    methods: {
+      onGet() {
+        // 打API
+        axios.get('/foodDetails?page=' + this.currentPage + '&count=' + this.pageSize + "&caloriesSortMode=" + this.caloriesArrowMode)
+          .then((response) => {
+            // get完成後收到的資料可以在這裡處理
+            console.log(response);
+            // 將API的商品資料存到Vue建立的products變數
+            if (response.data.code == 0) {
+              // 將API拿到的data存到Vue變數
+              this.total = response.data.data.total;
+              this.foods = response.data.data.foods;
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      },
+
+      // 新增資料
+      onAdd() {
+      // 將新增資料的對話盒顯示出來
+        console.log(JSON.stringify(this.newFoodDetailData));
+
+        // 打API將資料送到後端
+        axios.post('/addfoodDetail', this.newFoodDetailData)
+          .then((response) => {
+            console.log(response);
+            if (response.data.code == 0) {
+              this.$message.success('新增成功');
+              this.showAddFoodDetailModal = false;
+              this.onGet();
+              //this.showEditMode[index] = false;
+            
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+            // 新增失敗
+
+            this.$message.error('新增失敗');
+          });
+
+      },
+      onSizeChange(size) {
+        this.currentPage = 1;
+        this.onGet();
+      },
+      onCurrentChange() {
+        this.onGet();
+      },
+      // 分頁被點擊了上一頁
+      onPrevClick(page) {
+
+      },
+      // 分頁被點擊了下一頁
+      onNextClick(page) {
+       
+      },
+      // 改變卡洛里排序模式
+      onChangeCaloriesMode() {
+        this.currentPage = 1;
+
+        if(this.caloriesArrowMode == 0) this.caloriesArrowMode = 1;        
+        else if(this.caloriesArrowMode == 1) this.caloriesArrowMode = 2;
+        else
+          this.caloriesArrowMode = 0;
+
+        // 重新打API排序
+        this.onGet();
+      },
+      
+      
+
+    }
+  }).use(ElementPlus).mount('#app')
+</script>
+
+</html>
