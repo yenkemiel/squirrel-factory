@@ -150,3 +150,8 @@ blockquote {
   justify-content: center;
   align-items: center;
 }
+
+.func-btn-group {
+  display: flex;
+  justify-content: space-between;
+}

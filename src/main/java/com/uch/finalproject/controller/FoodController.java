@@ -1,14 +1,21 @@
 package com.uch.finalproject.controller;
 
 import java.sql.Statement;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.Writer;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -18,6 +25,9 @@ import com.uch.finalproject.model.BaseResponse;
 import com.uch.finalproject.model.FoodEntity;
 import com.uch.finalproject.model.FoodResponse;
 
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletResponse;
+
 @RestController
 public class FoodController {
     @RequestMapping(value = "/foods", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -25,7 +35,7 @@ public class FoodController {
         return getFoodList();
     }
 
-@RequestMapping(value = "/food", method = RequestMethod.POST,
+    @RequestMapping(value = "/food", method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE,  // 傳入的資料格式
             produces = MediaType.APPLICATION_JSON_VALUE)
     public BaseResponse addFood(@RequestBody FoodEntity data) {
@@ -130,6 +140,26 @@ public class FoodController {
             return new BaseResponse(e.getErrorCode(), e.getMessage());
         }catch(ClassNotFoundException e) {
             return new BaseResponse(1,"無法註冊驅動程式");
+        }
+    }
+
+    // 下載CSV
+    @RequestMapping(value = "/foods/{uid}/csv")
+    public void exportCsv(HttpServletResponse response, @PathVariable String uid) throws IOException, ServletException {
+        response.setContentType("text/csv");
+        response.setCharacterEncoding( "UTF-8" );
+        PrintWriter writer = response.getWriter();
+
+        FoodResponse foods = getFoodList();
+        try (CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT)) {
+            csvPrinter.printRecord("名稱", "類別", "採購日","到期日","數量");
+            for (FoodEntity food : foods.getData()) {
+                csvPrinter.printRecord(food.getName(), food.getCategory(), food.getBuyDate(), food.getExpDate(), food.getQuantity());
+            }
+
+            
+        } catch (IOException e) {
+            throw new ServletException("Generate CSV failed");
         }
     }
 

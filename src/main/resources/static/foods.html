@@ -23,12 +23,21 @@
   <script src="//unpkg.com/vue@3"></script>
   <!-- Import component library -->
   <script src="//unpkg.com/element-plus"></script>
+
+  <!-- Import Icon -->
+  <script src="//unpkg.com/@element-plus/icons-vue"></script>
+
   <link rel="stylesheet" href="css/demo-remote-select.css" />
 </head>
 
 <body id="app">
   <div class="container">
-    <el-button type="warning" class="btn" @click="showAddFoodModal = true">新增</el-button>
+    <div class="func-btn-group">
+      <el-button type="warning" class="btn" @click="showAddFoodModal = true">
+        <el-icon><Plus /></el-icon>&nbsp;&nbsp;新增</el-button>
+      <el-button type="warning" class="btn" @click="downloadCsv">
+        <el-icon><Download /></el-icon>&nbsp;&nbsp;下載</el-button>
+    </div>
 
     <table>
       <thead>
@@ -229,8 +238,8 @@
 <script>
   // Vue初始化
   const { createApp } = Vue
-
-  createApp({
+ 
+  const app = createApp({
     data() {
       // 網頁要使用的變數放這裡
       return {
@@ -450,7 +459,7 @@
 
 						this.$message.error('刪除失敗');
 					})     
-			}
+			},
       // ,
       //搜尋功能
       // remoteMethod(query) {
@@ -476,9 +485,43 @@
       //   } else {
       //     this.nameoptions = [];
       //   }
-      // }
+      // },
+      downloadCsv() {
+        // 下載
+				axios.get('/foods/0000/csv', null, {
+					headers: {
+						'Content-Type': 'text/csv',
+					}})
+					.then((response) => {
+						
+						if (response) {
+              console.log(response);
+							let blob = new Blob([response.data]);
+              const url = window.URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = '使用者庫存-' + new Date().toLocaleDateString() + '.csv';
+              document.body.appendChild(a);
+              a.click();
+              window.URL.revokeObjectURL(url);
+						}
+					})
+					.catch((error) => {
+						console.log(error);
+
+						this.$message.error('下載失敗');
+					})    
+      }
     }
-  }).use(ElementPlus).mount('#app')
+  }).use(ElementPlus);
+  
+  // 註冊Element Plus Icon
+  // 參考: https://element-plus.org/en-US/component/icon.html#icon-collection
+  // 參考: https://github.com/element-plus/element-plus/blob/dev/docs/en-US/component/icon.md
+  for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+    app.component(key, component)
+  }
+  app.mount('#app')
 </script>
 
 </html>
