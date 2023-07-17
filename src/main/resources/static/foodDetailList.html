@@ -81,7 +81,7 @@
             <span v-if="!showEditMode[index]" class="material-symbols-outlined" @click="showEditMode[index] = true">
               編輯
             </span>
-            <span @click="onDelete(item.stockId)" v-if="!showEditMode[index]" class="material-symbols-outlined">
+            <span @click="onDelete(item.foodId)" v-if="!showEditMode[index]" class="material-symbols-outlined">
               刪除
             </span>
             <span v-if="showEditMode[index]" class="material-symbols-outlined" @click="onUpdate(index)">
@@ -158,8 +158,6 @@
       @next-click="onNextClick"
       v-model:current-page="currentPage" 
       v-model:page-size="pageSize" />
-
-
 
 </body>
 
@@ -333,6 +331,52 @@
           });
 
       },
+      // 編輯資料
+      onUpdate(index) {
+        // 將新增資料的對話盒顯示出來
+        console.log(JSON.stringify(this.foods[index]));
+
+        // 打API將資料送到後端
+        axios.put('/updatefoodDetail', this.foods[index])
+                .then((response) => {
+                  console.log(response);
+                  if (response.data.code == 0) {
+                    this.$message.success('更新成功');
+                    this.showEditMode[index] = false;
+                    this.onGet();
+                  }
+                })
+                .catch((error) => {
+                  console.log(error);
+                  // 新增失敗
+
+                  this.$message.error('更新失敗');
+                });
+      },
+      // 刪除資料
+      onDelete(foodId) {
+        this.deleteDataIndex.foodId = foodId;
+        console.log(JSON.stringify(this.deleteDataIndex));
+        //打API將資料送到後端
+        axios.delete('/delfoodDetail', {data: this.deleteDataIndex }, {
+          headers: {
+            'Content-Type': 'application/json',
+          }})
+                .then((response) => {
+                  console.log(response);
+                  if (response.data.code == 0) {
+                    this.$message.success('刪除成功');
+                    this.onGet()
+                  }
+                })
+                .catch((error) => {
+                  console.log(error);
+
+                  this.$message.error('刪除失敗');
+                })
+      },
+
+
       onSizeChange(size) {
         this.currentPage = 1;
         this.onGet();

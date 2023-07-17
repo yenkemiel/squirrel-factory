@@ -4,6 +4,12 @@
 <head>
   <meta charset="UTF-8">
   <title>食物管理</title>
+  
+  <!-- 這是banner的CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+  <link rel="stylesheet" href="css/banner-new.css">
+
+  <!-- 這是表格的CSS -->
   <link rel="stylesheet" href="css/food-style.css">
   <link rel="stylesheet" href="css/foodDetail-style.css">
   <link rel="stylesheet" href="css/addFood.css">
@@ -23,13 +29,49 @@
   <script src="//unpkg.com/vue@3"></script>
   <!-- Import component library -->
   <script src="//unpkg.com/element-plus"></script>
+  <script src="//unpkg.com/@element-plus/icons-vue"></script>
+
   <link rel="stylesheet" href="css/demo-remote-select.css" />
 </head>
 
-<body id="app">
+<body id="app" style="padding-top: 0; padding-left: 0; padding-right: 0;">
+   <!-- 橫式選單 -->
+   <header class="header" role="banner">
+    <div class="container">
+      <nav><ul>
+          <li><a href="#">登入畫面</a></li>
+          <li class="active"><a href="#">食物庫存</a></li>
+          <li><a href="#">營養資訊</a></li>
+          <li><a href="#">採購清單</a></li>
+        </ul></nav>
+    </div>
+  </header>
+
+  <!-- 搜尋列start -->
+  <div class="align-middle m-4 remote-option" >
+    <h2>模糊搜尋</h2>
+    <el-select v-model="value" filterable remote reserve-value placeholder="Please enter a value" remote-show-suffix
+        :remote-method="remoteMethod" :loading="loading">
+        <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
+    </el-select>
+    <el-button type="warning" @click="showResult = true">送出</el-button>
+      <el-dialog v-model="showResult" title="結果" width="30%" :before-close="handleClose">
+        <span>{{value}}</span>
+        <template #footer>
+            <span class="dialog-footer">
+                <el-button type="primary" @click="showResult = false">
+                    關閉
+                </el-button>
+            </span>
+        </template>
+    </el-dialog>
+  </div>
+<!-- 搜尋列end -->
+
+<!-- 新增按鈕 -->
   <div class="container">
     <el-button type="warning" class="btn" @click="showAddFoodModal = true">新增</el-button>
-
+<!-- 表格start -->
     <table>
       <thead>
         <tr>
@@ -62,10 +104,10 @@
             </td>            
             <td>
               <span v-if="!showEditMode[index]" class="material-symbols-outlined" @click="showEditMode[index] = true">
-                編輯
+                edit_note
               </span>
-              <span @click="onDelete(item.stockId)" v-if="!showEditMode[index]" class="material-symbols-outlined">
-                刪除
+              <span v-if="!showEditMode[index]" class="material-symbols-outlined">
+                delete
               </span>
               <span v-if="showEditMode[index]" class="material-symbols-outlined" @click="onUpdate(index)">
                 確定
@@ -77,6 +119,7 @@
           </tr>
         </tbody>
     </table>
+<!-- 表格end -->
 
     <!-- 對話盒的淡黑色背景 -->
     <div v-if="showFoodDetail" class="mask"></div>
@@ -158,31 +201,10 @@
       <div class="title">新增食物資料</div>
       
       <div class="input-container ic2">
-        <input id="firstname" class="input" type="text" v-model="newFoodData.name" placeholder=" " />
+        <input id="foodname" class="input" type="text" v-model="newFoodData.name" placeholder=" " />
       <div class="cut"></div>
-        <label for="firstname" class="placeholder">食物名稱</label>
+        <label for="foodname" class="placeholder">食物名稱</label>
       </div>
-
-      <!-- <div class="input-container ic2">
-        <span class="add-food-title">搜尋食物名稱&nbsp;&nbsp;</span>
-        <el-select v-model="newFoodData.name" filterable remote reserve-value placeholder="Please enter a value" remote-show-suffix
-          :remote-method="remoteMethod" :loading="loading">
-          <el-option v-for="item in nameoptions" :key="item.namevalue" :label="item.namelabel" :value="item.namevalue" />
-      </el-select>
-      <el-button type="primary" @click="showResult = true">送出</el-button>
-
-      <el-dialog v-model="showResult" title="結果" width="30%" :before-close="handleClose">
-          <span>{{namevalue}}</span>
-          <template #footer>
-              <span class="dialog-footer">
-                  <el-button type="primary" @click="showResult = false">
-                      關閉
-                  </el-button>
-              </span>
-          </template>
-      </el-dialog>
-    </div> -->
-
       <div class="input-container ic2">
         <span class="add-food-title">種類&nbsp;&nbsp;</span>
         <el-select v-model="newFoodData.category" class="m-2" placeholder="Select" size="large">
@@ -239,7 +261,7 @@
         foodDetail: {},
         showFoodDetail: false,
         showAddFoodModal: false,
-        // nameoptions:[],
+        nameoptions:[],
         // loading: false,
         // showResult: false,
         
