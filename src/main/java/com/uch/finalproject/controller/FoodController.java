@@ -15,14 +15,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.uch.finalproject.model.BaseResponse;
+import com.uch.finalproject.model.FoodDetailListResponse;
 import com.uch.finalproject.model.FoodEntity;
 import com.uch.finalproject.model.FoodResponse;
 
 @RestController
 public class FoodController {
     @RequestMapping(value = "/foods", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public FoodResponse foods() {
-        return getFoodList();
+    public FoodResponse foods(int page, int count, int expdateSortMode) {
+        return getFoodList(page, count, expdateSortMode);
     }
 
 @RequestMapping(value = "/food", method = RequestMethod.POST,
@@ -133,7 +134,7 @@ public class FoodController {
         }
     }
 
-    private FoodResponse getFoodList() {
+    private FoodResponse getFoodList(int page, int count, int expdateSortMode) {
         Connection conn = null;
         Statement stmt = null;
         ResultSet rs = null;
@@ -143,7 +144,9 @@ public class FoodController {
             conn = DriverManager.getConnection("jdbc:mysql://localhost/foods?user=root&password=0000");
             stmt = conn.createStatement();
             // ToDo: 改query:  select name, category, buy_date, exp_date, quantity  from foods f join food_detail fd where f.food_id = fd.id;
-            rs = stmt.executeQuery("select f.stock_id, fd.food_id, name, category, buy_date, exp_date, quantity from food_stock f join food_detail fd on f.food_id = fd.food_id join category c on fd.category_no = c.category_no");
+            rs = stmt.executeQuery("select f.stock_id, fd.food_id, name, category, buy_date, exp_date, quantity from food_stock f join food_detail fd on f.food_id = fd.food_id join category c on fd.category_no = c.category_no"+
+            (expdateSortMode == 0 ? "" : (expdateSortMode == 1 ? "order by exp_date ASC":"order by exp_date DESC") ) +
+            " limit " + count + " offset " + ((page-1) * count));
             
             ArrayList<FoodEntity> foods = new ArrayList<>();
             while(rs.next()) {
@@ -165,5 +168,21 @@ public class FoodController {
         } catch(ClassNotFoundException e) {
             return new FoodResponse(1, "無法註冊驅動程式", null);
         }
+    
+    // 取得全部數量
+        //     rs = stmt.executeQuery("select count(*) as c from food_stock");
+        //     rs.next();
+        //     int total = rs.getInt("c");
+
+        //     return new FoodResponse(0, "成功", data, total);
+        // } catch(SQLException e) {
+        //     return new FoodDetailListResponse(e.getErrorCode(), "select fd.food_id , name, category, calories , protein , saturated_fat, total_carbohydrates , dietary_fiber " +
+        //             "from food_detail fd join category c on c.category_no = fd.category_no " +
+        //             (caloriesSortMode == 0 ? "" : (caloriesSortMode == 1 ? "order by calories ASC":"order by calories DESC") ) +
+        //             " limit " + count + " offset " + ((page-1) * count), null, 0);
+        // } catch(ClassNotFoundException e) {
+        //     return new FoodDetailListResponse(1, "無法註冊驅動程式", null, 0);
+        // }
+    
     }
 }

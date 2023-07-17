@@ -34,10 +34,10 @@
   <link rel="stylesheet" href="css/demo-remote-select.css" />
 </head>
 
-<body id="app" style="padding-top: 98px; padding-left: 0; padding-right: 0; padding-bottom: 50px; background-color: #1873ce;">
+<body id="app" style="padding-top: 98px; padding-left: 0; padding-right: 0; padding-bottom: 50px;">
     <!-- 橫式選單 -->
     <header class="header" role="banner">
-     <div class="container">
+     <div class="bannercontainer">
        <nav><ul>
            <li><a href="#">登入畫面</a></li>
            <li class="active"><a href="#">食物庫存</a></li>
@@ -47,19 +47,17 @@
      </div>
    </header>
    
-   <div class="h-screen flex items-start justify-center" style="background: #edf2f7;">
-    <div class="-my-2 py-2 overflow-auto sm:-mx-6 sm:px-6 lg:-mx-8 pr-10 lg:px-8" style="margin-top: 70px; background: #949494; max-height: 75%;">
+   <!-- <div class="h-screen flex items-start justify-center" style="background: #edf2f7;">
+    <div class="-my-2 py-2 overflow-auto sm:-mx-6 sm:px-6 lg:-mx-8 pr-10 lg:px-8" style="margin-top: 70px; background: #949494; max-height: 75%;"> -->
        
 <!-- 新增按鈕 -->
-<div class="container" style="background: #cfcc14;">
+<div class="container" >
     <el-button type="warning" class="btn" @click="showAddFoodModal = true">新增</el-button>
 
 <!-- 表格start -->
-        <div class="align-middle rounded-tl-lg rounded-tr-lg inline-block w-full py-4 overflow-hidden bg-white shadow-lg px-12 " style="background: #18aa20;">
-          <div class="flex justify-between" style="background: #26a1c7;">
-      <!-- 搜尋列start -->
-            <div class="align-middle m-4 remote-option" >
-            <h2>模糊搜尋</h2>
+        <div class="align-middle rounded-tl-lg rounded-tr-lg inline-block w-full py-4 overflow-hidden bg-white shadow-lg px-12 " >
+          <div class="flex justify-between">
+      <!-- 模糊搜尋列start -->
               <el-select v-model="value" filterable remote reserve-value placeholder="Search food" remote-show-suffix
                           :remote-method="remoteMethod" :loading="loading">
               <el-option v-for="item in nameoptions" :key="item.value" :label="item.label" :value="item.value" />
@@ -76,19 +74,21 @@
                   </span>
                   </template>
               </el-dialog>
-            </div>
-      <!-- 搜尋列end -->
+      <!-- 模糊搜尋列end -->
           </div>
         </div>
     <!-- 資料start -->        
-            <div class="align-middle inline-block min-w-full shadow overflow-hidden bg-white shadow-dashboard px-8 pt-3 rounded-bl-lg rounded-br-lg">
-                <table class="min-w-full">
+              <table class="min-w-full">
                    <thead>
                       <tr>
                         <th class="px-6 py-3 border-b-2 border-gray-300 text-left leading-4 text-blue-500 tracking-wider">名稱</th>
                         <th class="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider">類別</th>
                         <th class="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider">採購日</th>
-                        <th @click="onChangeExDatepMode" class="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider">到期日</th>
+                        
+                        <th class="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider" 
+                            style="display: flex; height: 60px; align-items: center; justify-content: center;"
+                            @click="onChangeExpDateMode">到期日<div v-if="ExpDateArrowMode!= 0" :class="[ExpDateArrowMode == 1 ? '':'arrow-down']">⯅</div>
+                        </th>                        
                         <th class="px-6 py-3 border-b-2 border-gray-300 text-left leading-4 text-blue-500 tracking-wider">數量</th>
                         <th class="px-6 py-3 border-b-2 border-gray-300 text-left leading-4 text-blue-500 tracking-wider">變更</th>
                       </tr>
@@ -205,20 +205,22 @@
     <!-- 新增食物的對話盒開始-->
     <div class="form" v-if="showAddFoodModal">
         <div class="title">新增食物資料</div>
-        
-        <div class="input-container ic2">
+
+<!-- 輸入食物名稱 -->
+        <!-- <div class="input-container ic2">
           <input id="firstname" class="input" type="text" v-model="newFoodData.name" placeholder=" " />
         <div class="cut"></div>
           <label for="firstname" class="placeholder">食物名稱</label>
-        </div>
+        </div> -->
 
-        <!-- <div class="input-container ic2">
+<!-- 模糊搜尋顯示食物名稱 -->
+        <div class="input-container ic2">
           <span class="add-food-title">食物名稱&nbsp;&nbsp;</span>
           <el-select v-model="newFoodData.name" filterable remote reserve-value placeholder="Search food" remote-show-suffix
           :remote-method="remoteMethod" :loading="loading">
           <el-option v-for="item in nameoptions" :key="item.value" :label="item.label" :value="item.value" />
           </el-select>
-        </div> -->
+        </div>
 
         <div class="input-container ic2">
           <span class="add-food-title">種類&nbsp;&nbsp;</span>
@@ -533,7 +535,7 @@
       onNextClick(page) {
        
       },
-      // 改變卡洛里排序模式
+      // 改變到期日排序模式
       onChangeExpDateMode() {
         this.currentPage = 1;
 

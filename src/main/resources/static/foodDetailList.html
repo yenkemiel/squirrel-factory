@@ -4,9 +4,16 @@
 <head>
   <meta charset="UTF-8">
   <title>食物營養資訊管理</title>
+
+  <!-- 這是banner的CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+  <link rel="stylesheet" href="css/banner-new.css">
+
+  <!-- 這是表格的CSS -->
   <link rel="stylesheet" href="css/food-style.css">
   <link rel="stylesheet" href="css/foodDetail-style.css">
   <link rel="stylesheet" href="css/addFood.css">
+
   <!-- 引入axios套件，用來透過HTTP協定在網頁內呼叫後端的API -->
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
@@ -22,12 +29,25 @@
   <script src="//unpkg.com/element-plus"></script>
 </head>
 
-<body id="app">
+<body id="app" style="padding-top: 98px; padding-left: 0; padding-right: 0; padding-bottom: 50px;">
+  <!-- 橫式選單 -->
+  <header class="header" role="banner">
+   <div class="bannercontainer">
+     <nav><ul>
+         <li><a href="#">登入畫面</a></li>
+         <li><a href="#">食物庫存</a></li>
+         <li class="active"><a href="#">營養資訊</a></li>
+         <li><a href="#">採購清單</a></li>
+       </ul></nav>
+   </div>
+ </header>
+
+<!-- 新增按鈕 -->
 <div class="container">
   <el-button type="warning" class="btn" @click="showAddFoodDetailModal = true">新增</el-button>
-  <div class="header">
-    <h2>每百公克食物資訊</h2>
-  </div>
+  
+  <h2 style="text-align: center;">每百公克食物資訊</h2>  
+  <!-- 表格start -->
   <table>
       <thead>
       <tr>
