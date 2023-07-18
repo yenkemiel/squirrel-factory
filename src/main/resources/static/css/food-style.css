@@ -150,3 +150,8 @@ blockquote {
   justify-content: center;
   align-items: center;
 }
+
+.home-btn {
+  text-decoration: none;
+  color: inherit;
+}

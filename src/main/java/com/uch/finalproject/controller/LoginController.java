@@ -14,12 +14,21 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.uch.finalproject.model.LoginResponse;
 
+import jakarta.servlet.http.HttpSession;
+
 @RestController
 public class LoginController {
     @RequestMapping(value = "/login", method = RequestMethod.GET,
         produces = MediaType.APPLICATION_JSON_VALUE)
-    public LoginResponse Login(String username, String password) {
-        return checkAccount(username, password);
+    public LoginResponse Login(String username, String password, HttpSession httpSession) {
+        LoginResponse loginResponse = checkAccount(username, password);
+
+        if(loginResponse.getCode() == 0) // 登入成功
+            httpSession.setAttribute("loginStatus", username + "已登入");
+        else 
+            httpSession.removeAttribute("loginStatus");
+
+        return loginResponse;
     }
 
     // 判斷帳號是否存在

@@ -37,19 +37,30 @@
 <body id="app" style="padding-top: 0; padding-left: 0; padding-right: 0;">
    <!-- 橫式選單 -->
    <header class="header" role="banner">
-    <div class="container">
+    <div class="d-lg-flex half"><a href="/" class="home-btn" style="text-decoration: none;">
+      <div class="bg order-1 order-md-2" style="background-image: url('images/bg_1.jpg');"></div>
+      <div class="contents order-2 order-md-1">
+        <div class="container">
+          <div class="row align-items-center justify-content-center">
+            <div class="col-md-7" style="margin-left: 240px;">
+              <h3><strong>Squirrel Factory</strong></h3>
+              <h3><strong>松鼠儲藏室</strong></h3>
+              <p class="mb-4" style="font-size: smaller; color: gray">協助您管理家裡食物庫存的小幫手</p>
+            </div></div></div></div>
+          </a></div>
+    <div class="bannercontainer">
       <nav><ul>
-          <li><a href="#">登入畫面</a></li>
-          <li class="active"><a href="#">食物庫存</a></li>
-          <li><a href="#">營養資訊</a></li>
+          <li><a href="/">登入畫面</a></li>
+          <li class="active"><a href="/foods.html">食物庫存</a></li>
+          <li><a href="/fooddetaillist.html">營養資訊</a></li>
           <li><a href="#">採購清單</a></li>
         </ul></nav>
     </div>
   </header>
 
   <!-- 搜尋列start -->
-  <div class="align-middle m-4 remote-option" >
-    <h2>模糊搜尋</h2>
+  <!-- <div class="align-middle m-4 remote-option" >
+    <h2>搜尋</h2>
     <el-select v-model="value" filterable remote reserve-value placeholder="Please enter a value" remote-show-suffix
         :remote-method="remoteMethod" :loading="loading">
         <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
@@ -65,7 +76,7 @@
             </span>
         </template>
     </el-dialog>
-  </div>
+  </div> -->
 <!-- 搜尋列end -->
 
 <!-- 新增按鈕 -->
@@ -78,10 +89,7 @@
           <th>名稱</th>
           <th>類別</th>
           <th>採購日</th>
-          <th style="display: flex; height: 60px; align-items: center; justify-content: center;"
-          @click="onChangeCaloriesMode">
-          到期日<div v-if="caloriesArrowMode != 0" :class="[caloriesArrowMode == 1 ? '':'arrow-down']">⯅</div>
-          </th>
+          <th>到期日</th>
           <th>數量</th>
           <th>變更</th>
         </tr>
@@ -380,7 +388,10 @@
             if (response.data.code == 0) {
               // 將API拿到的data存到Vue變數
               this.foods = response.data.data;
+            } else if(response.data.code == 9) { // 未登入
+              location.href = "/index.html";
             }
+
           })
           .catch((error) => {
             console.log(error);
