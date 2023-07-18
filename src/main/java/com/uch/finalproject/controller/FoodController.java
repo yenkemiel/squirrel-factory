@@ -1,5 +1,7 @@
 package com.uch.finalproject.controller;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.Statement;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -8,27 +10,31 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.uch.finalproject.model.BaseResponse;
 import com.uch.finalproject.model.FoodDetailListResponse;
 import com.uch.finalproject.model.FoodEntity;
 import com.uch.finalproject.model.FoodResponse;
 
-import jakarta.servlet.http.HttpSession;
-
 @RestController
 public class FoodController {
     @RequestMapping(value = "/foods", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public FoodResponse foods(HttpSession httpSession) {
-        return getFoodList();
+    public FoodResponse foods(int page, int count, int expdateSortMode) {
+        return getFoodList(page, count, expdateSortMode);
     }
+//    @RequestMapping(value = "/foods", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+//    public FoodResponse foods(HttpSession httpSession) {
+//        return getFoodList();
+//    }
 
-@RequestMapping(value = "/food", method = RequestMethod.POST,
+    @RequestMapping(value = "/food", method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE,  // 傳入的資料格式
             produces = MediaType.APPLICATION_JSON_VALUE)
     public BaseResponse addFood(@RequestBody FoodEntity data) {
@@ -126,7 +132,7 @@ public class FoodController {
             stmt.setInt(1, data.getStockId());
 
             stmt.executeUpdate();
-            
+
             return new BaseResponse(0, "刪除成功");
 
         }catch(SQLException e) {
@@ -136,7 +142,31 @@ public class FoodController {
         }
     }
 
-    private FoodResponse getFoodList() {
+    /* 下載CSV資料 */
+    @RequestMapping(value = "/foods/{uid}/csv")
+    public void exportCsv(HttpServletResponse response, @PathVariable String uid) throws IOException, ServletException {
+        response.setContentType("text/csv");
+        response.setCharacterEncoding("UTF-8");
+        PrintWriter writer = response.getWriter();
+
+        // 获取参数，例如 page、count 和 expdateSortMode
+        int page = 1; // 适当设置默认值
+        int count = 10; // 适当设置默认值
+        int expdateSortMode = 0; // 适当设置默认值
+
+        FoodResponse foods = getFoodList(page, count, expdateSortMode);
+        try (CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT)) {
+            csvPrinter.printRecord("名稱", "類別", "採購日", "到期日", "數量");
+            for (FoodEntity food : foods.getData()) {
+                csvPrinter.printRecord(food.getName(), food.getCategory(), food.getBuyDate(), food.getExpDate(), food.getQuantity());
+            }
+        } catch (IOException e) {
+            throw new ServletException("Generate CSV failed");
+        }
+    }
+
+
+    private FoodResponse getFoodList(int page, int count, int expdateSortMode) {
         Connection conn = null;
         Statement stmt = null;
         ResultSet rs = null;
@@ -146,7 +176,10 @@ public class FoodController {
             conn = DriverManager.getConnection("jdbc:mysql://localhost/foods?user=root&password=0000");
             stmt = conn.createStatement();
             // ToDo: 改query:  select name, category, buy_date, exp_date, quantity  from foods f join food_detail fd where f.food_id = fd.id;
-            rs = stmt.executeQuery("select f.stock_id, fd.food_id, name, category, buy_date, exp_date, quantity from food_stock f join food_detail fd on f.food_id = fd.food_id join category c on fd.category_no = c.category_no");
+            rs = stmt.executeQuery("select f.stock_id, fd.food_id, name, category, buy_date, exp_date, quantity from food_stock f join food_detail fd on f.food_id = fd.food_id join category c on fd.category_no = c.category_no "+
+                    (expdateSortMode == 0 ? "" : (expdateSortMode == 1 ? "order by exp_date ASC":"order by exp_date DESC") ) +
+                    " limit " + count + " offset " + ((page-1) * count));
+
             ArrayList<FoodEntity> foods = new ArrayList<>();
             while(rs.next()) {
                 FoodEntity foodEntity = new FoodEntity();
@@ -167,8 +200,8 @@ public class FoodController {
         } catch(ClassNotFoundException e) {
             return new FoodResponse(1, "無法註冊驅動程式", null);
         }
-    
-    // 取得全部數量
+
+        // 取得全部數量
         //     rs = stmt.executeQuery("select count(*) as c from food_stock");
         //     rs.next();
         //     int total = rs.getInt("c");
@@ -182,6 +215,8 @@ public class FoodController {
         // } catch(ClassNotFoundException e) {
         //     return new FoodDetailListResponse(1, "無法註冊驅動程式", null, 0);
         // }
-    
+
+
+
     }
 }

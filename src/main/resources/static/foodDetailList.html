@@ -68,14 +68,14 @@
   <table>
       <thead>
       <tr>
-        <th>編號</th>
+        <th style="display: flex; height: 60px; align-items: center; justify-content: center;"
+            @click="onChangeFoodIdMode">
+          編號<div v-if="foodIdArrowMode != 0" :class="[foodIdArrowMode == 1 ? '':'arrow-down']">⯅</div>
+        </th>
         <th>名稱</th>
         <th style="text-align:left;">類別編號</th>
         <th>類別</th>
-        <th style="display: flex; height: 60px; align-items: center; justify-content: center;"
-          @click="onChangeCaloriesMode">
-          熱量(大卡)<div v-if="caloriesArrowMode != 0" :class="[caloriesArrowMode == 1 ? '':'arrow-down']">⯅</div>
-        </th>
+        <th>熱量(大卡)</th>
         <th style="text-align:right;">蛋白質(公克)</th>
         <th style="text-align:right;">飽和脂肪(公克)</th>
         <th style="text-align:right;">總碳水化合物(公克)</th>
@@ -86,7 +86,10 @@
       <thead>
       <tbody>
         <tr v-for="(item, index) in foods">
-          <td>{{ item.foodId }}</td>
+          <td>
+            <div v-if="!showEditMode[index]">{{ item.foodId }}</div>
+            <el-input-number v-else v-model="foods[index].foodId" @change="handleChange" />
+          </td>
           <td>{{ item.name }}</td>
           <td>{{ item.categoryNo }}</td>
           <td>{{ item.category }}</td>
@@ -218,7 +221,7 @@
         currentPage: 1,  // 目前在哪一頁
         pageSize: 12,
         total: 0,
-        caloriesArrowMode: 0, // 0=不排序, 1=由大到小, 2=由小到大
+        foodIdArrowMode: 0, // 0=不排序, 1=由大到小, 2=由小到大
 
 
       // 使用者的選擇種類會存在這邊
@@ -331,7 +334,7 @@
     methods: {
       onGet() {
         // 打API
-        axios.get('/foodDetails?page=' + this.currentPage + '&count=' + this.pageSize + "&caloriesSortMode=" + this.caloriesArrowMode)
+        axios.get('/foodDetails?page=' + this.currentPage + '&count=' + this.pageSize + "&foodIdSortMode=" + this.foodIdArrowMode)
           .then((response) => {
             // get完成後收到的資料可以在這裡處理
             console.log(response);
@@ -433,14 +436,14 @@
       onNextClick(page) {
        
       },
-      // 改變卡洛里排序模式
-      onChangeCaloriesMode() {
+      // 改變編號排序模式
+      onChangeFoodIdMode() {
         this.currentPage = 1;
 
-        if(this.caloriesArrowMode == 0) this.caloriesArrowMode = 1;        
-        else if(this.caloriesArrowMode == 1) this.caloriesArrowMode = 2;
+        if(this.foodIdArrowMode == 0) this.foodIdArrowMode = 1;
+        else if(this.foodIdArrowMode == 1) this.foodIdArrowMode = 2;
         else
-          this.caloriesArrowMode = 0;
+          this.foodIdArrowMode = 0;
 
         // 重新打API排序
         this.onGet();
