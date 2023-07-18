@@ -114,7 +114,7 @@
               <span v-if="!showEditMode[index]" class="material-symbols-outlined" @click="showEditMode[index] = true">
                 edit_note
               </span>
-              <span v-if="!showEditMode[index]" class="material-symbols-outlined">
+              <span @click="onDelete(item.stockId)" v-if="!showEditMode[index]" class="material-symbols-outlined">
                 delete
               </span>
               <span v-if="showEditMode[index]" class="material-symbols-outlined" @click="onUpdate(index)">
