@@ -70,18 +70,18 @@
       <tr>
         <th>編號</th>
         <th>名稱</th>
-        <th>類別編號</th>
+        <th style="text-align:left;">類別編號</th>
         <th>類別</th>
         <th style="display: flex; height: 60px; align-items: center; justify-content: center;"
           @click="onChangeCaloriesMode">
           熱量(大卡)<div v-if="caloriesArrowMode != 0" :class="[caloriesArrowMode == 1 ? '':'arrow-down']">⯅</div>
         </th>
-        <th>蛋白質(公克)</th>
-        <th>飽和脂肪(公克)</th>
-        <th>總碳水化合物(公克)</th>
-        <th>膳食纖維(公克)</th>
+        <th style="text-align:right;">蛋白質(公克)</th>
+        <th style="text-align:right;">飽和脂肪(公克)</th>
+        <th style="text-align:right;">總碳水化合物(公克)</th>
+        <th style="text-align:center;">膳食纖維(公克)</th>
         <th>修改</th>
-        <th style="text-align: center;">收藏</th>
+        <th style="text-align:left;">收藏</th>
       </tr>
       <thead>
       <tbody>
@@ -91,37 +91,37 @@
           <td>{{ item.categoryNo }}</td>
           <td>{{ item.category }}</td>
           <td>
-          <div v-if="!showEditMode[index]">{{ item.calories }}</div>
+          <div v-if="!showEditMode[index]" style="text-align: right;">{{ item.calories }}</div>
             <el-input-number v-else v-model="foods[index].calories" @change="handleChange" />
           </td>            
 
           <td>
-          <div v-if="!showEditMode[index]">{{ item.protein }}</div>
+          <div v-if="!showEditMode[index]" style="text-align: right;">{{ item.protein }}</div>
             <el-input-number v-else v-model="foods[index].protein" @change="handleChange" />
           </td>            
 
           <td>
-          <div v-if="!showEditMode[index]">{{ item.saturatedFat }}</div>
+          <div v-if="!showEditMode[index]" style="text-align: right;">{{ item.saturatedFat }}</div>
             <el-input-number v-else v-model="foods[index].saturatedFat" @change="handleChange" />
           </td>            
 
           <td>
-            <div v-if="!showEditMode[index]">{{ item.totalCarbohydrates }}</div>
+            <div v-if="!showEditMode[index]" style="text-align: right;">{{ item.totalCarbohydrates }}</div>
             <el-input-number v-else v-model="foods[index].totalCarbohydrates" @change="handleChange" />
           </td>            
           
           <td>
-            <div v-if="!showEditMode[index]">{{ item.dietaryFiber }}</div>
+            <div v-if="!showEditMode[index]" style="text-align: right;">{{ item.dietaryFiber }}</div>
             <el-input-number v-else v-model="foods[index].dietaryFiber" @change="handleChange" />
-            </td>            
+            </td>
 
           <td>
             <span v-if="!showEditMode[index]" class="material-symbols-outlined" @click="showEditMode[index] = true">
               edit_note
             </span>
-            <!-- <span @click="onDelete(item.foodId)" v-if="!showEditMode[index]" class="material-symbols-outlined">
-              刪除
-            </span> -->
+            <span @click="onDelete(item.foodId)" v-if="!showEditMode[index]" class="material-symbols-outlined">
+              delete
+            </span>
             <span v-if="showEditMode[index]" class="material-symbols-outlined" @click="onUpdate(index)">
               確定
             </span>
@@ -130,7 +130,7 @@
             </span>
           </td>
           <td>
-            
+            <el-icon><Star /></el-icon>
             </td>     
         </tr>
       </tbody>
@@ -444,7 +444,7 @@
 
         // 重新打API排序
         this.onGet();
-      },
+      }
       
       
 
