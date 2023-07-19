@@ -26,13 +26,9 @@ import com.uch.finalproject.model.FoodResponse;
 @RestController
 public class FoodController {
     @RequestMapping(value = "/foods", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public FoodResponse foods(int page, int count, int expdateSortMode) {
-        return getFoodList(page, count, expdateSortMode);
+    public FoodResponse foods(int page, int count, int expDateSortMode, HttpSession httpSession) {
+        return getFoodList(page, count, expDateSortMode);
     }
-//    @RequestMapping(value = "/foods", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-//    public FoodResponse foods(HttpSession httpSession) {
-//        return getFoodList();
-//    }
 
     @RequestMapping(value = "/food", method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE,  // 傳入的資料格式
@@ -149,12 +145,12 @@ public class FoodController {
         response.setCharacterEncoding("UTF-8");
         PrintWriter writer = response.getWriter();
 
-        // 获取参数，例如 page、count 和 expdateSortMode
-        int page = 1; // 适当设置默认值
-        int count = 10; // 适当设置默认值
-        int expdateSortMode = 0; // 适当设置默认值
+        // 獲取參數，例如 page、count 和 expDateSortMode
+        int page = 1; // 適當設置默認值
+        int count = 10; // 適當設置默認值
+        int expDateSortMode = 0; // 適當設置默認值
 
-        FoodResponse foods = getFoodList(page, count, expdateSortMode);
+        FoodResponse foods = getFoodList(page, count, expDateSortMode);
         try (CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT)) {
             csvPrinter.printRecord("名稱", "類別", "採購日", "到期日", "數量");
             for (FoodEntity food : foods.getData()) {
@@ -166,7 +162,7 @@ public class FoodController {
     }
 
 
-    private FoodResponse getFoodList(int page, int count, int expdateSortMode) {
+    private FoodResponse getFoodList(int page, int count, int expDateSortMode) {
         Connection conn = null;
         Statement stmt = null;
         ResultSet rs = null;
@@ -175,8 +171,10 @@ public class FoodController {
             Class.forName("com.mysql.cj.jdbc.Driver");
             conn = DriverManager.getConnection("jdbc:mysql://localhost/foods?user=root&password=0000");
             stmt = conn.createStatement();
+
+            String sortDirection = (expDateSortMode == 1) ? "DESC" : "ASC";
             rs = stmt.executeQuery("select f.stock_id, fd.food_id, name, category, buy_date, exp_date, quantity from food_stock f join food_detail fd on f.food_id = fd.food_id join category c on fd.category_no = c.category_no "+
-                    (expdateSortMode == 0 ? "" : (expdateSortMode == 1 ? "order by exp_date ASC":"order by exp_date DESC") ) +
+                    "ORDER BY exp_date " + sortDirection  +
                     " limit " + count + " offset " + ((page-1) * count));
 
             ArrayList<FoodEntity> foods = new ArrayList<>();

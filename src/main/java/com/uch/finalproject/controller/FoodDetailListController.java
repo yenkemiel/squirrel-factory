@@ -1,25 +1,25 @@
 package com.uch.finalproject.controller;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.sql.*;
-import java.util.ArrayList;
-
-import com.uch.finalproject.model.*;
+import com.uch.finalproject.model.BaseResponse;
+import com.uch.finalproject.model.FoodDetailEntity;
+import com.uch.finalproject.model.FoodDetailListResponse;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import com.uch.finalproject.model.BaseResponse;
-import com.uch.finalproject.model.FoodDetailListEntity;
-import com.uch.finalproject.model.FoodResponse;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.sql.*;
+import java.util.ArrayList;
 
 
 @RestController
 public class FoodDetailListController {
+
     /* 獲取食物營養資料列表 */
 //    @RequestMapping(value = "/foodDetails", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 //    public FoodDetailListResponse foods(int page, int count, int foodIdSortMode) {
@@ -28,7 +28,8 @@ public class FoodDetailListController {
     @RequestMapping(value = "/foodDetails", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public FoodDetailListResponse foods(@RequestParam(value = "page", required = false) Integer page,
                                         @RequestParam("count") int count,
-                                        @RequestParam("foodIdSortMode") int foodIdSortMode) {
+                                        @RequestParam("foodIdSortMode") int foodIdSortMode,
+                                        HttpSession httpSession) {
         return getFoodList(page, count, foodIdSortMode);
     }
 

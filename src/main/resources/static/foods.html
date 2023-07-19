@@ -59,7 +59,7 @@
   </header>
 
   <!-- 搜尋列start -->
-  <!-- <div class="align-middle m-4 remote-option" >
+   <div class="align-middle m-4 remote-option" >
     <h2>搜尋</h2>
     <el-select v-model="value" filterable remote reserve-value placeholder="Please enter a value" remote-show-suffix
         :remote-method="remoteMethod" :loading="loading">
@@ -76,7 +76,7 @@
             </span>
         </template>
     </el-dialog>
-  </div> -->
+  </div>
 <!-- 搜尋列end -->
 
 <!-- 新增按鈕 -->
@@ -381,24 +381,44 @@
     },
     // 網頁要用的方法寫在這裡
     methods: {
+      // onGet() {
+      //   // 打API
+      //   axios.get("/foods")
+      //     .then((response) => {
+      //       // get完成後收到的資料可以在這裡處理
+      //       console.log(response);
+      //       // 將API的商品資料存到Vue建立的products變數
+      //       if (response.data.code == 0) {
+      //         // 將API拿到的data存到Vue變數
+      //         this.foods = response.data.data;
+      //       } else if(response.data.code == 9) { // 未登入
+      //         location.href = "/index.html";
+      //       }
+      //
+      //     })
+      //     .catch((error) => {
+      //       console.log(error);
+      //     });
+      // },
       onGet() {
         // 打API
-        axios.get("/foods")
-          .then((response) => {
-            // get完成後收到的資料可以在這裡處理
-            console.log(response);
-            // 將API的商品資料存到Vue建立的products變數
-            if (response.data.code == 0) {
-              // 將API拿到的data存到Vue變數
-              this.foods = response.data.data;
-            } else if(response.data.code == 9) { // 未登入
-              location.href = "/index.html";
-            }
-
-          })
-          .catch((error) => {
-            console.log(error);
-          });
+        // axios.get("/foods")
+        axios.get('/foods?page=' + this.currentPage + '&count=' + this.pageSize + "&expDateSortMode=" + this.expDateArrowMode)
+                .then((response) => {
+                  // get完成後收到的資料可以在這裡處理
+                  console.log(response);
+                  // 將API的商品資料存到Vue建立的products變數
+                  if (response.data.code == 0) {
+                    // 將API拿到的data存到Vue變數
+                    this.total = response.data.data.total;
+                    this.foods = response.data.data;
+                  }else if(response.data.code == 9) { // 未登入
+                             location.href = "/index.html";
+                  }
+                })
+                .catch((error) => {
+                  console.log(error);
+                });
       },
       // 新增資料
       onAdd() {
