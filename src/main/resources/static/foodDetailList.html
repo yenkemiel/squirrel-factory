@@ -194,7 +194,7 @@
 <!-- 新增食物營養資訊的對話盒結束 -->
 
 <!-- @size-change事件: 重新打API要資料，把目前頁數設定回第一頁-->
-  <el-pagination background layout="prev, pager, next, sizes" 
+  <el-pagination background layout="prev, pager, next, sizes"
       :total="total" 
       :page-sizes="[12, 24, 50, 100]"
       style="justify-content: center;"
@@ -203,7 +203,7 @@
       @prev-click="onPrevClick" 
       @next-click="onNextClick"
       v-model:current-page="currentPage" 
-      v-model:page-size="pageSize" />
+      v-model:page-size="pageSize"/>
 
 </body>
 
@@ -223,7 +223,7 @@
         currentPage: 1,  // 目前在哪一頁
         pageSize: 12,
         total: 0,
-        foodIdArrowMode: 0, // 0=不排序, 1=由大到小, 2=由小到大
+        foodIdArrowMode: 0, // 0=升序, 1=降序
 
 
       // 使用者的選擇種類會存在這邊

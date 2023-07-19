@@ -175,7 +175,6 @@ public class FoodController {
             Class.forName("com.mysql.cj.jdbc.Driver");
             conn = DriverManager.getConnection("jdbc:mysql://localhost/foods?user=root&password=0000");
             stmt = conn.createStatement();
-            // ToDo: 改query:  select name, category, buy_date, exp_date, quantity  from foods f join food_detail fd where f.food_id = fd.id;
             rs = stmt.executeQuery("select f.stock_id, fd.food_id, name, category, buy_date, exp_date, quantity from food_stock f join food_detail fd on f.food_id = fd.food_id join category c on fd.category_no = c.category_no "+
                     (expdateSortMode == 0 ? "" : (expdateSortMode == 1 ? "order by exp_date ASC":"order by exp_date DESC") ) +
                     " limit " + count + " offset " + ((page-1) * count));

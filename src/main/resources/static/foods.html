@@ -89,7 +89,10 @@
           <th>名稱</th>
           <th>類別</th>
           <th>採購日</th>
-          <th>到期日</th>
+          <th style="display: flex; height: 60px; align-items: center; justify-content: center;"
+              @click="onChangeExpDateMode">
+            到期日
+            <div :class="[expDateArrowMode === 0 ? '' : 'arrow-down']">⯅</div>
           <th>數量</th>
           <th>變更</th>
         </tr>
@@ -277,7 +280,7 @@
         currentPage: 1,  // 目前在哪一頁
         pageSize: 12,
         total: 0,
-        caloriesArrowMode: 0, // 0=不排序, 1=由大到小, 2=由小到大
+        expDateArrowMode: 0, // 0=升序, 1=降序
 
        // 使用者的選擇種類會存在這邊
        //categoryValue: '種類',
@@ -483,7 +486,36 @@
 
 						this.$message.error('刪除失敗');
 					})     
-			}
+			},
+      onSizeChange(size) {
+        this.currentPage = 1;
+        this.onGet();
+      },
+      onCurrentChange() {
+        this.onGet();
+      },
+      // 分頁被點擊了上一頁
+      onPrevClick(page) {
+
+      },
+      // 分頁被點擊了下一頁
+      onNextClick(page) {
+
+      },
+      // 改變編號排序模式
+      onChangeExpDateMode() {
+        this.currentPage = 1;
+
+        if (this.expDateArrowMode === 0) {
+          this.expDateArrowMode = 1; // 改為降序排序
+        } else {
+          this.expDateArrowMode = 0; // 改為升序排序
+        }
+
+        // 重新打API排序
+        this.onGet();
+
+      }
       // ,
       //搜尋功能
       // remoteMethod(query) {
