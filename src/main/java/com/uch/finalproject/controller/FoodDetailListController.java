@@ -1,14 +1,17 @@
 package com.uch.finalproject.controller;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.*;
 import java.util.ArrayList;
 
 import com.uch.finalproject.model.*;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletResponse;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.uch.finalproject.model.BaseResponse;
 import com.uch.finalproject.model.FoodDetailListEntity;
@@ -18,10 +21,17 @@ import com.uch.finalproject.model.FoodResponse;
 @RestController
 public class FoodDetailListController {
     /* 獲取食物營養資料列表 */
+//    @RequestMapping(value = "/foodDetails", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+//    public FoodDetailListResponse foods(int page, int count, int foodIdSortMode) {
+//        return getFoodList(page, count, foodIdSortMode);
+//    }
     @RequestMapping(value = "/foodDetails", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public FoodDetailListResponse foods(int page, int count, int foodIdSortMode) {
+    public FoodDetailListResponse foods(@RequestParam(value = "page", required = false) Integer page,
+                                        @RequestParam("count") int count,
+                                        @RequestParam("foodIdSortMode") int foodIdSortMode) {
         return getFoodList(page, count, foodIdSortMode);
     }
+
 
     /* 新增食物營養資料 */
     @RequestMapping(value = "/addfoodDetail", method = RequestMethod.POST,
@@ -121,28 +131,28 @@ public class FoodDetailListController {
             return new FoodDetailListResponse(4,"資料刪除失敗",null, 0);
         }
     }
-    //    /* 下載CSV資料 */
-//    @RequestMapping(value = "/foods/{uid}/csv")
-//    public void exportCsv(HttpServletResponse response, @PathVariable String uid) throws IOException, ServletException {
-//        response.setContentType("text/csv");
-//        response.setCharacterEncoding("UTF-8");
-//        PrintWriter writer = response.getWriter();
-//
-//        // 获取参数，例如 page、count 和 expdateSortMode
-//        int page = 1; // 适当设置默认值
-//        int count = 10; // 适当设置默认值
-//        int expdateSortMode = 0; // 适当设置默认值
-//
-//        FoodResponse foods = getFoodList(page, count, expdateSortMode);
-//        try (CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT)) {
-//            csvPrinter.printRecord("名稱", "類別", "採購日", "到期日", "數量");
-//            for (FoodEntity food : foods.getData()) {
-//                csvPrinter.printRecord(food.getName(), food.getCategory(), food.getBuyDate(), food.getExpDate(), food.getQuantity());
-//            }
-//        } catch (IOException e) {
-//            throw new ServletException("Generate CSV failed");
-//        }
-//    }
+    /* 下載CSV資料 */
+    @RequestMapping(value = "/foodDetails/{uid}/csv")
+    public void exportCsv(HttpServletResponse response, @PathVariable String uid) throws IOException, ServletException {
+        response.setContentType("text/csv");
+        response.setCharacterEncoding("UTF-8");
+        PrintWriter writer = response.getWriter();
+
+        // 獲取參數，例如 page、count 和 expdateSortMode
+        int page = 1; // 適當設置默認值
+        int count = 10; // 適當設置默認值
+        int foodIdSortMode = 0; // 適當設置默認值
+
+        FoodDetailListResponse foods = getFoodList(page, count, foodIdSortMode);
+        try (CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT)) {
+            csvPrinter.printRecord("編號","名稱", "類別編號", "類別", "熱量(大卡)", "蛋白質(公克)", "飽和脂肪(公克)", "總碳水化合物(公克)", "膳食纖維(公克)");
+            for (FoodDetailEntity foodDetail : foods.getData().getFoods()) {
+                csvPrinter.printRecord(foodDetail.getFoodId(), foodDetail.getName(), foodDetail.getCategoryNo(), foodDetail.getCategory(), foodDetail.getCalories(), foodDetail.getProtein(), foodDetail.getSaturatedFat(), foodDetail.getTotalCarbohydrates(), foodDetail.getDietaryFiber());
+            }
+        } catch (IOException e) {
+            throw new ServletException("Generate CSV failed");
+        }
+    }
     /* 食物營養列表陣列 */
     private FoodDetailListResponse getFoodList(int page, int count, int foodIdSortMode) {
         Connection conn = null;
@@ -156,11 +166,12 @@ public class FoodDetailListController {
 
             stmt = conn.createStatement();
 
-            // ToDo: 改query:  select name, category, buy_date, exp_date, quantity  from foods f join food_detail fd where f.food_id = fd.id;
-            rs = stmt.executeQuery("select fd.food_id , name, fd.category_no, category, calories , protein , saturated_fat, total_carbohydrates , dietary_fiber " +
-                    "from food_detail fd join category c on c.category_no = fd.category_no " +
-                    (foodIdSortMode == 0 ? "" : (foodIdSortMode == 1 ? "order by food_id ASC":"order by food_id DESC") ) +
-                    " limit " + count + " offset " + ((page-1) * count));
+            String sortDirection = (foodIdSortMode == 1) ? "DESC" : "ASC";
+            rs = stmt.executeQuery("SELECT fd.food_id, name, fd.category_no, category, calories, protein, saturated_fat, total_carbohydrates, dietary_fiber " +
+                    "FROM food_detail fd JOIN category c ON c.category_no = fd.category_no " +
+                    "ORDER BY food_id " + sortDirection + " " +
+                    "LIMIT " + count + " OFFSET " + ((page - 1) * count));
+
 
             ArrayList<FoodDetailEntity> foods = new ArrayList<>();
             while(rs.next()) {

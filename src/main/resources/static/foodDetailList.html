@@ -70,7 +70,8 @@
       <tr>
         <th style="display: flex; height: 60px; align-items: center; justify-content: center;"
             @click="onChangeFoodIdMode">
-          編號<div v-if="foodIdArrowMode != 0" :class="[foodIdArrowMode == 1 ? '':'arrow-down']">⯅</div>
+          編號
+          <div v-if="foodIdArrowMode === 0" :class="[foodIdArrowMode === 1 ? 'arrow-down' : '']">⯅</div>
         </th>
         <th>名稱</th>
         <th style="text-align:left;">類別編號</th>
@@ -440,13 +441,15 @@
       onChangeFoodIdMode() {
         this.currentPage = 1;
 
-        if(this.foodIdArrowMode == 0) this.foodIdArrowMode = 1;
-        else if(this.foodIdArrowMode == 1) this.foodIdArrowMode = 2;
-        else
-          this.foodIdArrowMode = 0;
+        if (this.foodIdArrowMode === 0) {
+          this.foodIdArrowMode = 1; // 改為降序排序
+        } else {
+          this.foodIdArrowMode = 0; // 改為升序排序
+        }
 
         // 重新打API排序
         this.onGet();
+
       }
       
       
