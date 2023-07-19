@@ -2,7 +2,7 @@ package com.uch.finalproject.controller;
 
 import com.uch.finalproject.model.BaseResponse;
 import com.uch.finalproject.model.FoodDetailEntity;
-import com.uch.finalproject.model.FoodDetailListResponse;
+import com.uch.finalproject.model.FoodDetailListPageResponse;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -26,10 +26,10 @@ public class FoodDetailListController {
 //        return getFoodList(page, count, foodIdSortMode);
 //    }
     @RequestMapping(value = "/foodDetails", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public FoodDetailListResponse foods(@RequestParam(value = "page", required = false) Integer page,
-                                        @RequestParam("count") int count,
-                                        @RequestParam("foodIdSortMode") int foodIdSortMode,
-                                        HttpSession httpSession) {
+    public FoodDetailListPageResponse foods(@RequestParam(value = "page", required = false) Integer page,
+                                            @RequestParam("count") int count,
+                                            @RequestParam("foodIdSortMode") int foodIdSortMode,
+                                            HttpSession httpSession) {
         return getFoodList(page, count, foodIdSortMode);
     }
 
@@ -38,7 +38,7 @@ public class FoodDetailListController {
     @RequestMapping(value = "/addfoodDetail", method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE,  // 傳入的資料格式
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public FoodDetailListResponse addfoodDetail(@RequestBody FoodDetailEntity data){
+    public FoodDetailListPageResponse addfoodDetail(@RequestBody FoodDetailEntity data){
         Connection conn = null;
         PreparedStatement stmt = null;
 
@@ -61,12 +61,12 @@ public class FoodDetailListController {
 
             stmt.executeUpdate();
 
-            return new FoodDetailListResponse(0, "資料新增成功",null, 0);
+            return new FoodDetailListPageResponse(0, "資料新增成功",null, 0);
 
         }catch(SQLException e) {
-            return new FoodDetailListResponse(e.getErrorCode(), e.getMessage(),null, 0);
+            return new FoodDetailListPageResponse(e.getErrorCode(), e.getMessage(),null, 0);
         }catch(ClassNotFoundException e) {
-            return new FoodDetailListResponse(2,"資料新增失敗",null, 0);
+            return new FoodDetailListPageResponse(2,"資料新增失敗",null, 0);
         }
     }
     /* 編輯食物營養資料 */
@@ -99,12 +99,12 @@ public class FoodDetailListController {
 
             stmt.executeUpdate();
 
-            return new FoodDetailListResponse(0, "資料更新成功",null, 0);
+            return new FoodDetailListPageResponse(0, "資料更新成功",null, 0);
 
         }catch(SQLException e) {
-            return new FoodDetailListResponse(e.getErrorCode(), e.getMessage(),null, 0);
+            return new FoodDetailListPageResponse(e.getErrorCode(), e.getMessage(),null, 0);
         }catch(ClassNotFoundException e) {
-            return new FoodDetailListResponse(3,"資料更新失敗",null, 0);
+            return new FoodDetailListPageResponse(3,"資料更新失敗",null, 0);
         }
     }
     /* 刪除食物營養資料 */
@@ -124,12 +124,12 @@ public class FoodDetailListController {
 
             stmt.executeUpdate();
 
-            return new FoodDetailListResponse(0, "資料刪除成功",null, 0);
+            return new FoodDetailListPageResponse(0, "資料刪除成功",null, 0);
 
         }catch(SQLException e) {
-            return new FoodDetailListResponse(e.getErrorCode(), e.getMessage(),null, 0);
+            return new FoodDetailListPageResponse(e.getErrorCode(), e.getMessage(),null, 0);
         }catch(ClassNotFoundException e) {
-            return new FoodDetailListResponse(4,"資料刪除失敗",null, 0);
+            return new FoodDetailListPageResponse(4,"資料刪除失敗",null, 0);
         }
     }
     /* 下載CSV資料 */
@@ -144,7 +144,7 @@ public class FoodDetailListController {
         int count = 10; // 適當設置默認值
         int foodIdSortMode = 0; // 適當設置默認值
 
-        FoodDetailListResponse foods = getFoodList(page, count, foodIdSortMode);
+        FoodDetailListPageResponse foods = getFoodList(page, count, foodIdSortMode);
         try (CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT)) {
             csvPrinter.printRecord("編號","名稱", "類別編號", "類別", "熱量(大卡)", "蛋白質(公克)", "飽和脂肪(公克)", "總碳水化合物(公克)", "膳食纖維(公克)");
             for (FoodDetailEntity foodDetail : foods.getData().getFoods()) {
@@ -155,7 +155,7 @@ public class FoodDetailListController {
         }
     }
     /* 食物營養列表陣列 */
-    private FoodDetailListResponse getFoodList(int page, int count, int foodIdSortMode) {
+    private FoodDetailListPageResponse getFoodList(int page, int count, int foodIdSortMode) {
         Connection conn = null;
         Statement stmt = null;
         ResultSet rs = null;
@@ -195,14 +195,14 @@ public class FoodDetailListController {
             rs.next();
             int total = rs.getInt("c");
 
-            return new FoodDetailListResponse(0, "成功", foods, total);
+            return new FoodDetailListPageResponse(0, "成功", foods, total);
         } catch(SQLException e) {
-            return new FoodDetailListResponse(e.getErrorCode(), "select fd.food_id , name, category, calories , protein , saturated_fat, total_carbohydrates , dietary_fiber " +
+            return new FoodDetailListPageResponse(e.getErrorCode(), "select fd.food_id , name, category, calories , protein , saturated_fat, total_carbohydrates , dietary_fiber " +
                     "from food_detail fd join category c on c.category_no = fd.category_no " +
                     (foodIdSortMode == 0 ? "" : (foodIdSortMode == 1 ? "order by food_id ASC":"order by food_id DESC") ) +
                     " limit " + count + " offset " + ((page-1) * count), null, 0);
         } catch(ClassNotFoundException e) {
-            return new FoodDetailListResponse(1, "無法註冊驅動程式", null, 0);
+            return new FoodDetailListPageResponse(1, "無法註冊驅動程式", null, 0);
         }
     }
 }

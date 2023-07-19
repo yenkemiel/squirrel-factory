@@ -282,6 +282,8 @@
         total: 0,
         expDateArrowMode: 0, // 0=升序, 1=降序
 
+        keyword: '',
+
        // 使用者的選擇種類會存在這邊
        //categoryValue: '種類',
         options: [
@@ -490,21 +492,51 @@
                   this.$message.error('刪除失敗');
               })
       },
+      // 搜尋資料
+      onSearch() {
+        // 打API要搜尋資料
+        // 打API
+        axios.get('/food', {
+          params: {
+            name: this.keyword,
+            page: this.currentPage,
+            count: this.pageSize,
+            expDateSortMode: this.expDateArrowMode
+          }
+        })
+                .then((response) => {
+                  // get完成後收到的資料可以在這裡處理
+                  console.log(response);
+                  // 將API的商品資料存到Vue建立的products變數
+                  if (response.data.code == 0) {
+                    // 將API拿到的data存到Vue變數
+                    this.total = response.data.data.total;
+                    this.foods = response.data.data.foods;
+                  }
+                })
+                .catch((error) => {
+                  console.log(error);
+                });
+      },
+
+
       onSizeChange(size) {
         this.currentPage = 1;
         this.onGet();
       },
       onCurrentChange() {
-        this.onGet();
+        if(this.keyword.length > 0) {
+          this.onSearch();
+        } else
+          this.onGet();
       },
       // 分頁被點擊了上一頁
       onPrevClick(page) {
-
       },
       // 分頁被點擊了下一頁
       onNextClick(page) {
-
       },
+
       // 改變編號排序模式
       onChangeExpDateMode() {
         this.currentPage = 1;
@@ -516,8 +548,11 @@
         }
 
         // 重新打API排序
-        this.onGet();
-
+        if(this.keyword.length > 0) {
+          this.onSearch();
+        } else
+          this.onGet();
+      },
       }
       // ,
       //搜尋功能
@@ -545,7 +580,7 @@
       //     this.nameoptions = [];
       //   }
       // }
-    }
+    //}
   }).use(ElementPlus).mount('#app')
 </script>
 
