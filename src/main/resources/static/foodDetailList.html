@@ -71,7 +71,8 @@
         <th style="display: flex; height: 60px; align-items: center; justify-content: center;"
             @click="onChangeFoodIdMode">
           編號
-          <div v-if="foodIdArrowMode === 0" :class="[foodIdArrowMode === 1 ? 'arrow-down' : '']">⯅</div>
+          <div :class="[foodIdArrowMode === 0 ? '' : 'arrow-down']">⯅</div>
+          <!-- <div v-if="foodIdArrowMode === 0" :class="[foodIdArrowMode === 1 ? 'arrow-down' : '']">⯅</div> -->
         </th>
         <th>名稱</th>
         <th style="text-align:left;">類別編號</th>

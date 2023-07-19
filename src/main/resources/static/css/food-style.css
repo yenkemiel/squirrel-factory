@@ -155,3 +155,8 @@ blockquote {
   text-decoration: none;
   color: inherit;
 }
+
+.arrow-down {
+  transform: rotate(180deg);
+}
+
