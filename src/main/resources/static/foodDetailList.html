@@ -63,8 +63,8 @@
   <el-button type="warning" class="btn" @click="showAddFoodDetailModal = true">新增</el-button>
   
   <h2 style="text-align: center;">每百公克食物資訊</h2>  
+
   <!-- 表格start -->
-  
   <table>
       <thead>
       <tr>
@@ -72,7 +72,6 @@
             @click="onChangeFoodIdMode">
           編號
           <div :class="[foodIdArrowMode === 0 ? '' : 'arrow-down']">⯅</div>
-          <!-- <div v-if="foodIdArrowMode === 0" :class="[foodIdArrowMode === 1 ? 'arrow-down' : '']">⯅</div> -->
         </th>
         <th>名稱</th>
         <th style="text-align:left;">類別編號</th>
@@ -204,8 +203,9 @@
       @next-click="onNextClick"
       v-model:current-page="currentPage" 
       v-model:page-size="pageSize"/>
+  </el-pagination>
 
-</body>
+    </body>
 
 <script>
 
