@@ -132,8 +132,91 @@ public class FoodController {
             return new BaseResponse(1,"無法註冊驅動程式");
         }
     }
+<<<<<<< Updated upstream
 
     private FoodResponse getFoodList() {
+=======
+    //搜尋食物
+    @RequestMapping(value = "/food", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public FoodPageResponse searchFood(@RequestParam("name") String keyword, int page, int count, int expDateSortMode) {
+        return search("fd.name", keyword, "", page, count, expDateSortMode);
+    }
+
+    private FoodPageResponse search(String columnName, String keyword, String keyvalue, int page, int count, int expDateSortMode) {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            conn = DriverManager.getConnection("jdbc:mysql://localhost/foods?user=root&password=0000");
+
+            String sortDirection = (expDateSortMode == 1) ? "DESC" : "ASC";
+            String queryString ="SELECT f.stock_id, fd.food_id, name, category, buy_date, exp_date, quantity FROM food_stock f JOIN food_detail fd ON f.food_id = fd.food_id JOIN category c ON fd.category_no = c.category_no " +
+                    "WHERE " + columnName + " LIKE '%" + keyword + "%'" +
+                    " ORDER BY exp_date " + sortDirection +
+                    " LIMIT " + count + " OFFSET " + ((page - 1) * count);
+//            return new FoodResponse(0, queryString, null);
+
+            // 字串搜尋
+            stmt = conn.prepareStatement(queryString);
+            rs = stmt.executeQuery(queryString);
+
+            // 將搜尋結果存到ArrayList
+            ArrayList<FoodEntity> foods = new ArrayList<>();
+            while(rs.next()) {
+                FoodEntity foodEntity = new FoodEntity();
+                foodEntity.setStockId(rs.getInt("stock_id"));
+                foodEntity.setFoodId(rs.getInt("food_id"));
+                foodEntity.setName(rs.getString("name"));
+                foodEntity.setCategory(rs.getString("category"));
+                foodEntity.setBuyDate(rs.getDate("buy_date"));
+                foodEntity.setExpDate(rs.getDate("exp_date"));
+                foodEntity.setQuantity(rs.getInt("quantity"));
+
+                foods.add(foodEntity);
+            }
+
+            // 取得全部數量
+            rs = stmt.executeQuery("SELECT count(*) as c FROM food_stock f JOIN food_detail fd ON f.food_id = fd.food_id JOIN category c ON fd.category_no = c.category_no " +
+                    "WHERE " + columnName + " LIKE '%" + keyword + "%'");
+            rs.next();
+            int total = rs.getInt("c");
+
+            return new FoodPageResponse(0, "搜尋成功", foods, total);
+        } catch (ClassNotFoundException e) {
+            return new FoodPageResponse(1, "找不到驅動程式", null, 0);
+        } catch (SQLException e) {
+            return new FoodPageResponse(e.getErrorCode(), e.getMessage(), null, 0);
+        }
+    }
+
+
+    /* 下載CSV資料 */
+    @RequestMapping(value = "/foods/{uid}/csv")
+    public void exportCsv(HttpServletResponse response, @PathVariable String uid) throws IOException, ServletException {
+        response.setContentType("text/csv");
+        response.setCharacterEncoding("UTF-8");
+        PrintWriter writer = response.getWriter();
+
+        // 獲取參數，例如 page、count 和 expDateSortMode
+        int page = 1; // 適當設置默認值
+        int count = 10; // 適當設置默認值
+        int expDateSortMode = 0; // 適當設置默認值
+
+        FoodPageResponse foods = getFoodList(page, count, expDateSortMode);
+        try (CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT)) {
+            csvPrinter.printRecord("名稱", "類別", "採購日", "到期日", "數量");
+            for (FoodEntity food : foods.getData().getFoods()) {
+                csvPrinter.printRecord(food.getName(), food.getCategory(), food.getBuyDate(), food.getExpDate(), food.getQuantity());
+            }
+        } catch (IOException e) {
+            throw new ServletException("Generate CSV failed");
+        }
+    }
+
+
+    private FoodPageResponse getFoodList(int page, int count, int expDateSortMode) {
+>>>>>>> Stashed changes
         Connection conn = null;
         Statement stmt = null;
         ResultSet rs = null;
