@@ -59,7 +59,7 @@
   </header>
 
   <!-- 搜尋列start -->
-   <div class="align-middle m-4 remote-option" >
+   <div class="align-middle m-4 remote-option" style="margin-left: 300px;" >
     <h2>搜尋</h2>
     <el-select v-model="value" filterable remote reserve-value placeholder="Please enter a value" remote-show-suffix
         :remote-method="remoteMethod" :loading="loading">
@@ -96,7 +96,7 @@
           <th>數量</th>
           <th>變更</th>
         </tr>
-        <thead>
+      </thead>
         <tbody>
           <tr v-for="(item, index) in foods">
             <td @click="onShowFoodDetail(item.foodId)" class="can-click">{{ item.name }}</td>
