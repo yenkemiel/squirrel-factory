@@ -1,0 +1,21 @@
+/* results-window.css */
+.results-window {
+    border: 1px solid #ccc;
+    padding: 16px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.results-window h2 {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.results-window ul {
+    list-style: none;
+    padding: 0;
+}
+
+.results-window li {
+    margin-bottom: 5px;
+}

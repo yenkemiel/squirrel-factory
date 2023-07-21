@@ -16,7 +16,8 @@
     <!-- 這是按鍵的CSS -->
     <link rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"/>
-
+    <!-- 這是過期通知的CSS -->
+    <link rel="stylesheet" href="/path/to/results-window.css">
     <!-- 引入axios套件，用來透過HTTP協定在網頁內呼叫後端的API -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
@@ -36,6 +37,7 @@
 </head>
 
 <body id="app" style="padding-top: 0; padding-left: 0; padding-right: 0;">
+
 <!-- 橫式選單 -->
 <header class="header" role="banner">
     <div class="d-lg-flex half"><a href="/" class="home-btn" style="text-decoration: none;">
@@ -78,6 +80,21 @@
     <span class="caret"></span>
 </form>
 <!-- 搜尋列end -->
+
+<!-- Results Window Start -->
+<div class="results-window" v-if="foods.length > 0">
+    <h2>過期食物通知</h2>
+    <ul>
+        <li v-for="food in foods">
+            <strong>{{ food.name }}</strong> - 過期日: {{ food.expDate }}
+        </li>
+    </ul>
+</div>
+<div v-else>
+    <h2>過期食物通知</h2>
+    <p>No expired foods found.</p>
+</div>
+<!-- Results Window End -->
 
 <!-- 新增按鈕 -->
 <div class="container">
@@ -383,6 +400,7 @@
         mounted() {
             this.onGet();
             this.onSearch();
+            this.searchExpFood();
         },
         // 網頁要用的方法寫在這裡
         methods: {
@@ -513,6 +531,31 @@
                         console.log(response);
                         // 將API的商品資料存到Vue建立的products變數
                         if (response.data.code == 0) {
+                            // 將API拿到的data存到Vue變數
+                            this.total = response.data.data.total;
+                            this.foods = response.data.data.foods;
+                        }
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
+            },
+
+            //過期食物通知
+            searchExpFood() {
+                // Modify the API URL to match the new backend endpoint for expfood
+                axios.get('/expfood', {
+                    params: {
+                        page: this.currentPage,
+                        count: this.pageSize,
+                        expDateSortMode: this.expDateArrowMode
+                    }
+                })
+                    .then((response) => {
+                        // get完成後收到的資料可以在這裡處理
+                        console.log(response);
+                        // 將API的商品資料存到Vue建立的products變數
+                        if (response.data.code === 0) {
                             // 將API拿到的data存到Vue變數
                             this.total = response.data.data.total;
                             this.foods = response.data.data.foods;

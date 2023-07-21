@@ -8,6 +8,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 import com.uch.finalproject.model.*;
@@ -187,8 +188,67 @@ public class FoodController {
         }
     }
 
+    // 過期食物通知
+    @RequestMapping(value = "/expfood", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public FoodPageResponse searchExpFood(int page, int count, int expDateSortMode) {
+        return searchExp(page, count, expDateSortMode);
+    }
 
-    /* 下載CSV資料 */
+    private FoodPageResponse searchExp(int page, int count, int expDateSortMode) {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            conn = DriverManager.getConnection("jdbc:mysql://localhost/foods?user=root&password=0000");
+
+            // Get the current date in the format "yyyy-MM-dd"
+            LocalDate currentDate = LocalDate.now();
+            String currentDateString = currentDate.toString();
+
+            String sortDirection = (expDateSortMode == 1) ? "DESC" : "ASC";
+            String queryString ="SELECT f.stock_id, fd.food_id, name, category, buy_date, exp_date, quantity FROM food_stock f JOIN food_detail fd ON f.food_id = fd.food_id JOIN category c ON fd.category_no = c.category_no " +
+                    "WHERE exp_date <= '" + currentDateString + "'" +
+                    " ORDER BY exp_date " + sortDirection +
+                    " LIMIT " + count + " OFFSET " + ((page - 1) * count);
+
+            // 字串搜尋
+            stmt = conn.prepareStatement(queryString);
+            rs = stmt.executeQuery(queryString);
+
+            // 將搜尋結果存到ArrayList
+            ArrayList<FoodEntity> foods = new ArrayList<>();
+            while(rs.next()) {
+                FoodEntity foodEntity = new FoodEntity();
+                foodEntity.setStockId(rs.getInt("stock_id"));
+                foodEntity.setFoodId(rs.getInt("food_id"));
+                foodEntity.setName(rs.getString("name"));
+                foodEntity.setCategory(rs.getString("category"));
+                foodEntity.setBuyDate(rs.getDate("buy_date"));
+                foodEntity.setExpDate(rs.getDate("exp_date"));
+                foodEntity.setQuantity(rs.getInt("quantity"));
+
+                foods.add(foodEntity);
+            }
+
+            // 取得全部數量
+            rs = stmt.executeQuery("SELECT count(*) as c FROM food_stock f JOIN food_detail fd ON f.food_id = fd.food_id JOIN category c ON fd.category_no = c.category_no " +
+                    "WHERE exp_date <= '" + currentDateString + "'");
+            rs.next();
+            int total = rs.getInt("c");
+
+            return new FoodPageResponse(0, "資料搜尋成功", foods, total);
+        } catch (ClassNotFoundException e) {
+            return new FoodPageResponse(1, "資料搜尋失敗", null, 0);
+        } catch (SQLException e) {
+            return new FoodPageResponse(e.getErrorCode(), e.getMessage(), null, 0);
+        }
+    }
+
+
+
+
+            /* 下載CSV資料 */
     @RequestMapping(value = "/foods/{uid}/csv")
     public void exportCsv(HttpServletResponse response, @PathVariable String uid) throws IOException, ServletException {
         response.setContentType("text/csv");
@@ -210,6 +270,7 @@ public class FoodController {
             throw new ServletException("Generate CSV failed");
         }
     }
+
 
 
     private FoodPageResponse getFoodList(int page, int count, int expDateSortMode) {
