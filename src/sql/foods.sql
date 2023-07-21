@@ -2288,6 +2288,42 @@ INSERT INTO `food_stock` (`stock_id`, `food_id`, `buy_date`, `exp_date`, `quanti
 (13, NULL, '2023-07-11', '2023-07-11', 11),
 (14, NULL, '2023-07-19', '2023-07-18', 11);
 
+-- --------------------------------------------------------
+
+--
+-- 資料表結構 `food_tobuy`
+--
+
+CREATE TABLE `food_tobuy` (
+  `tobuy_id` int(11) NOT NULL,
+  `food_id` int(11) NOT NULL,
+  `tobuy_date` date DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+--
+-- 傾印資料表的資料 `food_tobuy`
+--
+
+INSERT INTO `food_tobuy` (`tobuy_id`, `food_id`, `tobuy_date`) VALUES
+(1, 1, '2023-06-01'),
+(2, 3, '2023-09-29'),
+(3, 4, '2023-08-17'),
+(4, 5, '2023-08-14'),
+(5, 6, '2023-08-15'),
+(6, 6, '2023-08-16'),
+(7, 8, '2023-08-17'),
+(8, 10, '2023-08-13'),
+(9, 11, '2023-09-29'),
+(10, 55, '2023-08-17'),
+(11, 77, '2023-08-09'),
+(12, 66, '2023-09-29'),
+(13, 88, '2023-09-28'),
+(14, 777, '2023-09-29'),
+(15, 123, '2023-09-27'),
+(16, 455, '2023-07-25'),
+(17, 7, '2023-09-29'),
+(18, 9, '2023-11-03');
+
 --
 -- 已傾印資料表的索引
 --
@@ -2319,6 +2355,13 @@ ALTER TABLE `food_stock`
   ADD KEY `food_id` (`food_id`);
 
 --
+-- 資料表索引 `food_tobuy`
+--
+ALTER TABLE `food_tobuy`
+  ADD PRIMARY KEY (`tobuy_id`),
+  ADD KEY `food_id` (`food_id`);
+
+--
 -- 在傾印的資料表使用自動遞增(AUTO_INCREMENT)
 --
 
@@ -2341,6 +2384,12 @@ ALTER TABLE `food_stock`
   MODIFY `stock_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
+-- 使用資料表自動遞增(AUTO_INCREMENT) `food_tobuy`
+--
+ALTER TABLE `food_tobuy`
+  MODIFY `tobuy_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+
+--
 -- 已傾印資料表的限制式
 --
 
@@ -2350,6 +2399,12 @@ ALTER TABLE `food_stock`
 ALTER TABLE `food_detail`
   ADD CONSTRAINT `food_detail_ibfk_1` FOREIGN KEY (`category_no`) REFERENCES `category` (`category_no`),
   ADD CONSTRAINT `food_detail_ibfk_2` FOREIGN KEY (`category_no`) REFERENCES `category` (`category_no`);
+
+--
+-- 資料表的限制式 `food_tobuy`
+--
+ALTER TABLE `food_tobuy`
+  ADD CONSTRAINT `food_tobuy_ibfk_1` FOREIGN KEY (`food_id`) REFERENCES `food_detail` (`food_id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
