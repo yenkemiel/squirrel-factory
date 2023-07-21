@@ -1,6 +1,6 @@
 <!doctype html>
-<html lang="en"> 
- <head> 
+<html lang="en">
+  <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -12,56 +12,69 @@
     <!-- Style -->
     <link rel="stylesheet" href="css/style.css">
     <title>Login 登入</title>
-
   <!-- 引入axios套件，用來透過HTTP協定在網頁內呼叫後端的API -->
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-  
   <!-- 引入Vue.js -->
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
- </head> 
- <body>
-    <div class="d-lg-flex half">
-      <div class="bg order-1 order-md-2" style="background-image: url('images/bg_1.jpg');"></div>
-      <div class="contents order-2 order-md-1">
-        <div class="container">
-          <div class="row align-items-center justify-content-center">
-            <div class="col-md-7">
-              <h3>Login to <strong>Squirrel Factory</strong></h3>
-              <h3>歡迎光臨<strong>松鼠儲藏室</strong></h3>
-              <p class="mb-4">協助您管理家裡食物庫存的小幫手</p>
+  </head>
+
+  <body>
+  <div class="d-lg-flex half">
+    <div class="bg order-1 order-md-2" style="background-image: url('images/bg_1.jpg');"></div>
+    <div class="contents order-2 order-md-1">
+      <div class="container">
+        <div class="row align-items-center justify-content-center">
+          <div class="col-md-7">
+            <h3>Login to <strong>Squirrel Factory</strong></h3>
+            <h3>歡迎光臨<strong>松鼠儲藏室</strong></h3>
+            <p class="mb-4">協助您管理家裡食物庫存的小幫手</p>
+
+<body id="app"> 
+  <section> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> 
+    <div class="signin">
+      <form class="form" method="POST" action="\login\login" ref="form"> 
+        <div class="inputBox"> 
+         <input type="text" name="username" v-model="username" required> <i>帳號</i> 
+         <div v-if="showWarning" class="warning">不可包含空白及特殊字元</div>
   
 
- <div id="app"> 
-  <section> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> <span></span> 
-   <div class="signin"> 
-    <div class="content">
-        
-     <form class="form" method="POST" action="\login\login" ref="form"> 
-      <div class="inputBox"> 
-        <label for="usernamecolumn">使用者名稱</label>
-        <input type="text" class="form-control" name="username" v-model="username" required> 
-       <div v-if="showWarning" class="warning">不可包含空白及特殊字元</div>
+            <form class="form" method="POST" action="/login/login" ref="form">
+              <div class="form-group first">
+                <label for="usernamecolumn">使用者名稱</label>
+                <!-- <input type="text" class="form-control" placeholder="Your Username" id="username"> -->
+                <input type="text" name="username" v-model="username" required class="form-control">
+                <div v-if="showWarning" class="warning" style="font-size: 8px; color: #a71434;">不可包含空白及特殊字元</div>
+              </div>
+              <div class="form-group last mb-3">
+                <label for="passwordcolumn">密碼</label>
+                <!-- <input type="password" class="form-control" placeholder="Your Password" id="password"> -->
+                <input type="password" name="password" v-model="password" class="form-control"> 
+              </div>          
+              
+              <!--<div class="d-flex mb-5 align-items-center">
+                <label class="control control--checkbox mb-0"><span class="caption">Remember me</span>
+                  <input type="checkbox" checked="checked"/>
+                  <div class="control__indicator"></div>
+                
+                <span class="ml-auto"><a href="#" class="forgot-pass">Forgot Password忘記密碼</a></span> </label>>
+              </div></label>>-->
+
+              <input type="submit" value="Log In" @click="checkAccount" class="btn btn-block btn-primary">
+            
+            
+            </form>
+
+          </div>
+        </div>
       </div>
-      <div class="inputBox"> 
-        <label for="passwordcolumn">密碼</label>
-        <input type="password" class="form-control" name="password" v-model="password"> 
-      </div> 
-      <div class="links"> <a href="#">忘記密碼</a> <a href="#">註冊</a> 
-      </div> 
-      <div class="inputBox"> 
-       <input type="button" value="Login" @click="checkAccount" class="btn btn-block btn-primary"> 
-      </div> 
-     </form> 
-
-
-     
-    </div> 
-   </div> 
-  </section> <!-- partial --> 
-</div>
-            </div></div></div></div></div>
-          </body>
- <script lang="javascript">
+    </div>    
+  </div>
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <script src="js/popper.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/main.js"></script>
+  </body>
+  <script lang="javascript">
     const {createApp} = Vue
 
     // 建立Vue物件
@@ -104,7 +117,7 @@
                         console.log(response);
                         
                         if(response.data.code == 0) // 登入成功
-                            location.href = '/foods.html';
+                            location.href = '/foods-new.html';
                         else // 登入失敗
                             location.href = 'loginResult.html?message=' + response.data.message;
                     })

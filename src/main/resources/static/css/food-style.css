@@ -44,7 +44,7 @@ table td.r, table th.r {
   padding: 20px;
   margin: 0 auto;
   width: 100%;
-  max-width: 1200px;
+  max-width: 1200px;  
 }
 
 .btn {
@@ -110,7 +110,7 @@ table td.r, table th.r {
   }
 }
 body {
-  background: #9BC86A;
+  background-color: white;
   font: 400 14px 'Calibri','Arial';
   padding: 20px;
 }
@@ -150,3 +150,13 @@ blockquote {
   justify-content: center;
   align-items: center;
 }
+
+.home-btn {
+  text-decoration: none;
+  color: inherit;
+}
+
+.arrow-down {
+  transform: rotate(180deg);
+}
+

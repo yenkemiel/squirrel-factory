@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="utf-8">
+    <title>食物管理-new</title>
+
+  <!-- 這是banner的CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+  <link rel="stylesheet" href="css/banner-new.css">
+
+<!-- 這是表格的CSS -->
+  <link href="https://unpkg.com/tailwindcss@1.5.2/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/foodDetail-style.css">
+  <link rel="stylesheet" href="css/addFood.css">
+
+  <!-- 這是按鍵的CSS -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
+  <!-- 引入axios套件，用來透過HTTP協定在網頁內呼叫後端的API -->
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+  <!-- 引入Vue.js -->
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+  <!-- 引入Element UI介面庫-->
+  <!-- Import style -->
+  <link rel="stylesheet" href="//unpkg.com/element-plus/dist/index.css" />
+    <!-- Import Vue 3 -->
+  <script src="//unpkg.com/vue@3"></script>
+  <!-- Import component library -->
+  <script src="//unpkg.com/element-plus"></script>
+  <script src="//unpkg.com/@element-plus/icons-vue"></script>
+  <link rel="stylesheet" href="css/demo-remote-select.css" />
+</head>
+
+<body id="app" style="padding-top: 98px; padding-left: 0; padding-right: 0; padding-bottom: 50px;">
+    <!-- 橫式選單 -->
+    <header class="header" role="banner">
+     <div class="bannercontainer">
+       <nav><ul>
+           <li><a href="#">登入畫面</a></li>
+           <li class="active"><a href="#">食物庫存</a></li>
+           <li><a href="#">營養資訊</a></li>
+           <li><a href="#">採購清單</a></li>
+         </ul></nav>
+     </div>
+   </header>
+   
+   <div class="h-screen flex items-start justify-center" style="background: #edf2f7;">
+    <div class="-my-2 py-2 overflow-auto sm:-mx-6 sm:px-6 lg:-mx-8 pr-10 lg:px-8" style="margin-top: 70px; background: #edf2f7; max-height: 75%;">
+       
+<!-- 新增按鈕 -->
+<div class="container" >
+    <el-button type="warning" class="btn" @click="showAddFoodModal = true">新增</el-button>
+
+<!-- 表格start -->
+        <div class="align-middle rounded-tl-lg rounded-tr-lg inline-block w-full py-4 overflow-hidden bg-white shadow-lg px-12 " >
+          <div class="flex justify-between">
+      <!-- 模糊搜尋列start -->
+              <!-- <el-select v-model="value" filterable remote reserve-value placeholder="Search food" remote-show-suffix
+                          :remote-method="remoteMethod" :loading="loading">
+              <el-option v-for="item in nameoptions" :key="item.value" :label="item.label" :value="item.value" />
+              </el-select>
+              
+              <el-button type="warning" @click="showResult = true">送出</el-button>
+              <el-dialog v-model="showResult" title="結果" width="30%" :before-close="handleClose">
+                  <span>{{value}}</span>
+                  <template #footer>
+                  <span class="dialog-footer">
+                      <el-button type="primary" @click="showResult = false">
+                      關閉
+                      </el-button>
+                  </span>
+                  </template>
+              </el-dialog> -->
+      <!-- 模糊搜尋列end -->
+          </div>
+        </div>
+    <!-- 資料start -->        
+              <table class="min-w-full">
+                   <thead>
+                      <tr>
+                        <th class="px-6 py-3 border-b-2 border-gray-300 text-left leading-4 text-blue-500 tracking-wider">名稱</th>
+                        <th class="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider">類別</th>
+                        <th class="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider">採購日</th>
+                        
+                        <th class="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider" 
+                            style="display: flex; height: 60px; align-items: center; justify-content: center;"
+                            @click="onChangeExpDateMode">到期日<div v-if="ExpDateArrowMode!= 0" :class="[ExpDateArrowMode == 1 ? '':'arrow-down']">⯅</div>
+                        </th>                        
+                        <th class="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider">數量</th>
+                        <th class="px-6 py-3 border-b-2 border-gray-300 text-left leading-4 text-blue-500 tracking-wider">變更</th>
+                      </tr>
+                   </thead>
+                       <tbody class="bg-white">
+                          <tr v-for="(item, index) in foods">
+                           <td  @click="onShowFoodDetail(item.foodId)" class="px-6 py-4 whitespace-no-wrap border-b border-gray-500 text-blue-900 text-sm leading-5">{{ item.name }} </td>
+                           <td class="px-6 py-4 whitespace-no-wrap border-b text-blue-900 border-gray-500 text-sm leading-5"> {{ item.category }} </td>
+                           <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-500 text-blue-900 text-sm leading-5">
+                                <div v-if="!showEditMode[index]">{{ item.buyDate }}</div>
+                                   <el-date-picker v-else v-model="foods[index].buyDate" type="date" placeholder="Pick a day" :size="size" />
+                             </td>
+                             <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-500 text-blue-900 text-sm leading-5">
+                                <div v-if="!showEditMode[index]">{{ item.expDate }}</div>
+                                    <el-date-picker v-else v-model="foods[index].expDate" type="date="placeholder="Pick a day" :size="size" />
+                             </td>
+                             <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-500 text-blue-900 text-sm leading-5">
+                                <div v-if="!showEditMode[index]">{{ item.quantity }}</div>
+                                    <el-input-number v-else v-model="foods[index].quantity" @change="handleChange" />
+                             </td>
+                             <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-500 text-blue-900 text-sm leading-5">
+                                <span v-if="!showEditMode[index]" class="material-symbols-outlined" @click="showEditMode[index] = true">
+                                      edit_note
+                                </span>
+                                <span @click="onDelete(item.stockId)" v-if="!showEditMode[index]" class="material-symbols-outlined">
+                                      delete
+                                </span>
+                                <span v-if="showEditMode[index]" class="material-symbols-outlined" @click="onUpdate(index)">
+                                      確定
+                                </span>
+                                <span v-if="showEditMode[index]" class="material-symbols-outlined" @click="showEditMode[index] = false">
+                                      取消
+                                </span>
+                            </td>                          
+                          </tr>                               
+                       </tbody>
+                </table>
+<!-- 表格end -->
+
+<!-- 對話盒的淡黑色背景 -->
+    <div v-if="showFoodDetail" class="mask"></div>
+
+<!-- 這是對話視窗的開始 -->
+    <div v-if="showFoodDetail" class="table">
+        <h2 class="heading">
+          {{ foodDetail.name }}
+        </h2>
+        <div class="blockTitle">
+          <p>類別
+            <span class="price">{{ foodDetail.category }}
+              <sub></sub>
+            </span>
+            <ul class="options">
+              <li>(每百克食物含量)</li>
+          </ul>
+          </p>
+        </div>
+        <div class="block">
+          <p>熱量
+            <span class="price">{{ foodDetail.calories}}
+              <sub>千卡</sub>
+            </span>
+            <ul class="options">
+              <li>根據衛服部國民健康署建議，體重正常者，每日熱量需求為體重(kg) * 30大卡(輕度活動) / 35大卡(中度活動) / 40大卡(重度活動)。</li>
+            </ul>
+          </p>
+        </div>
+        <div class="block">
+          <p>蛋白質
+            <span class="price">{{ foodDetail.protein }}
+              <sub>克</sub>
+            </span>
+            <ul class="options">
+              <li>指粗蛋白crude protein。</li>
+            </ul>
+          </p>
+        </div>
+        <div class="block">
+          <p>飽和脂肪
+            <span class="price">{{ foodDetail.saturatedFat }}
+              <sub>克</sub>
+            </span>
+            <ul class="options">
+              <li>一般認為飲食中比例較高的飽和脂肪酸會增加心血管疾病和中風的風險，但是近年來有越來越多研究顯示，飽和脂肪酸有降低體脂和心血管疾病發病率的作用。</li>
+            </ul>
+          </p>
+        </div>
+        <div class="block">
+          <p>總碳水化合物
+            <span class="price">{{ foodDetail.totalCarbohydrates }}
+              <sub>克</sub>
+            </span>
+            <ul class="options">
+              <li>碳水化合物即醣類。醣類的眾多衍生物與免疫系統、預防疾病、血液凝固和生長等有極大的關聯。</li>
+            </ul>
+          </p>
+        </div>
+        <div class="block">
+          <p>膳食纖維
+            <span class="price">{{ foodDetail.dietaryFiber }}
+              <sub>克</sub>
+            </span>
+            <ul class="options">
+              <li>根據世界衛生組織建議，每人每天攝入25g-35g膳食纖維，有助於預防心血管疾病、糖尿病及其他一系列健康問題。</li>
+            </ul>
+      
+          </p>
+        </div>
+        <button class="btn">
+          <p @click="showFoodDetail = false">關閉</p>
+        </button>
+      </div>
+    <!-- 這是對話視窗的結束 -->
+    <!-- 新增食物的對話盒開始-->
+    <div class="form" v-if="showAddFoodModal">
+        <div class="title">新增食物資料</div>
+
+<!-- 輸入食物名稱 -->
+        <div class="input-container ic2">
+          <input id="firstname" class="input" type="text" v-model="newFoodData.name" placeholder=" " />
+        <div class="cut"></div>
+          <label for="firstname" class="placeholder">食物名稱</label>
+        </div>
+
+<!-- 模糊搜尋顯示食物名稱 -->
+        <!-- <div class="input-container ic2">
+          <span class="add-food-title">食物名稱&nbsp;&nbsp;</span>
+          <el-select v-model="newFoodData.name" filterable remote reserve-value placeholder="Search food" remote-show-suffix
+          :remote-method="remoteMethod" :loading="loading">
+          <el-option v-for="item in nameoptions" :key="item.value" :label="item.label" :value="item.value" />
+          </el-select>
+        </div> -->
+
+        <div class="input-container ic2">
+          <span class="add-food-title">種類&nbsp;&nbsp;</span>
+          <el-select v-model="newFoodData.category" class="m-2" placeholder="Select" size="large">
+            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
+          </el-select>
+        </div>
+  
+        <div class="input-container ic2">
+          <span class="add-food-title">採購日&nbsp;&nbsp;</span>
+          <el-date-picker v-model="newFoodData.buyDate" type="date" placeholder="Pick a day" :size="size" />
+        </div>
+  
+        <div class="input-container ic2">
+          <span class="add-food-title">到期日&nbsp;&nbsp;</span>
+          <el-date-picker v-model="newFoodData.expDate" type="date" placeholder="Pick a day" :size="size" />
+        </div>
+        <div class="input-container ic2">
+          <input id="email" class="input" type="number" v-model="newFoodData.quantity" placeholder=" " />
+          <div class="cut cut-short"></div>
+          <label for="email" class="placeholder">數量</label>
+        </div>
+        <div class="btn-group">
+          <button type="text" class="submit" @click="showAddFoodModal = false">取消</button>
+          <button type="text" class="submit" @click="onAdd">送出</button>
+        </div>
+      </div>
+      <!-- 新增食物的對話盒結束 -->
+ 
+
+<!-- @size-change事件: 重新打API要資料，把目前頁數設定回第一頁-->
+     <el-pagination background layout="prev, pager, next, sizes"
+                    :total="total"
+                    :page-sizes="[12, 24, 50, 100]"
+                    style="justify-content: center;"
+                    @size-change="onSizeChange"
+                    @current-change="onCurrentChange"
+                    @prev-click="onPrevClick"
+                    @next-click="onNextClick"
+                    v-model:current-page="currentPage"
+                    v-model:page-size="pageSize" />
+<!-- @size-change事件-->
+     
+
+</body>
+   
+<script>
+    // Vue初始化
+    const { createApp } = Vue
+  
+    createApp({
+      data() {
+        // 網頁要使用的變數放這裡
+        return {
+          message: 'Hello Vue!',
+          foods: [],
+          foodDetail: {},
+          showFoodDetail: false,
+          showAddFoodModal: false,
+          nameoptions:[],
+          // loading: false,
+          // showResult: false,
+          
+          //分頁使用的變數
+          currentPage: 1,  // 目前在哪一頁
+          pageSize: 12,
+          total: 0,
+          ExpDateArrowMode: 0, // 0=不排序, 1=由大到小, 2=由小到大
+  
+         // 使用者的選擇種類會存在這邊
+         //categoryValue: '種類',
+          options: [
+            {
+              value: '水果類',
+              label: '水果類',
+            },
+            {
+              value: '蔬菜類',
+              label: '蔬菜類',
+            },
+            {
+              value: '豆類',
+              label: '豆類',
+            },
+            {
+              value: '菇類',
+              label: '菇類',
+            },
+            {
+              value: '堅果及種子類',
+              label: '堅果及種子類',
+            },
+            {
+              value: '穀物類',
+              label: '穀物類',
+            },
+            {
+              value: '油脂類',
+              label: '油脂類',
+            },
+            {
+              value: '藻類',
+              label: '藻類',
+            },
+            {
+              value: '乳品類',
+              label: '乳品類',
+            },
+            {
+              value: '蛋類',
+              label: '蛋類',
+            },
+            {
+              value: '肉類',
+              label: '肉類',
+            },
+            {
+              value: '魚貝類',
+              label: '魚貝類',
+            },
+            {
+              value: '加工調理食品及其他類',
+              label: '加工調理食品及其他類',
+            },
+            {
+              value: '飲料類',
+              label: '飲料類',
+            },
+            {
+              value: '澱粉類',
+              label: '澱粉類',
+            },
+            {
+              value: '糖類',
+              label: '糖類',
+            },
+            {
+              value: '糕餅點心類',
+              label: '糕餅點心類',
+            },
+            {
+              value: '調味料及香辛料類',
+              label: '調味料及香辛料類',
+            },
+          ],
+  
+          newFoodData: {
+            name: '',
+            category: '',
+            buyDate: null,
+            expDate: null,
+            quantity: 0,
+          },
+  
+              // 編輯模式下顯示數量欄位用
+                  showEditMode: [],
+                  deleteDataIndex: {
+                  stockId :'',
+          },
+  
+        }
+      },
+      // 當網頁載入完成後會被Vue框架呼叫
+      mounted() {
+        this.onGet();
+      },
+      // 網頁要用的方法寫在這裡
+      methods: {
+        onGet() {
+          // 打API
+          // axios.get("/foods")
+          axios.get('/foods?page=' + this.currentPage + '&count=' + this.pageSize + "&expdateSortMode=" + this.ExpDateArrowMode)
+            .then((response) => {
+              // get完成後收到的資料可以在這裡處理
+              console.log(response);
+              // 將API的商品資料存到Vue建立的products變數
+              if (response.data.code == 0) {
+                // 將API拿到的data存到Vue變數
+                this.total = response.data.data.total;
+                this.foods = response.data.data;
+              }
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        },
+        // 新增資料
+        onAdd() {
+          // 將新增資料的對話盒顯示出來
+          console.log(JSON.stringify(this.newFoodData));
+  
+          // 打API將資料送到後端
+          axios.post('/food', this.newFoodData)
+            .then((response) => {
+              console.log(response);
+              if (response.data.code == 0) {
+                this.$message.success('新增成功');
+                this.showAddFoodModal = false;
+                this.onGet();                
+              
+              }
+            })
+            .catch((error) => {
+              console.log(error);
+              // 新增失敗
+  
+              this.$message.error('新增失敗');
+            });
+  
+        },
+        // 蔬果名稱被點擊時呼叫的方法
+        onShowFoodDetail(food_id) {
+          // 顯示食品詳細資訊的對話盒
+          this.showFoodDetail = true;
+          // alert('id=' + food_id + '被點擊了');
+  
+          axios.get("/foodDetail?id=" + food_id)
+            .then((response) => {
+              // get完成後收到的資料可以在這裡處理
+              console.log(response);
+              // 將API的商品資料存到Vue建立的products變數
+              if (response.data.code == 0) {
+                // 將API拿到的data存到Vue變數
+                this.foodDetail = response.data.data;
+              }
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        },
+        onUpdate(index) {
+                  // 將新增資料的對話盒顯示出來
+                  console.log(JSON.stringify(this.foods[index]));
+  
+                  // 打API將資料送到後端
+                  axios.put('/food', this.foods[index])
+                      .then((response) => {
+                          console.log(response);
+                          if (response.data.code == 0) {
+                              this.$message.success('更新成功');
+                              this.showEditMode[index] = false;
+                              this.onGet();
+                          }
+                      })
+                      .catch((error) => {
+                          console.log(error);
+                          // 更新失敗
+                          
+                          this.$message.error('更新失敗');
+                      });
+              },
+        onDelete(stockId) {
+                  this.deleteDataIndex.stockId = stockId;
+                  console.log(JSON.stringify(this.deleteDataIndex));
+                  //打API將資料送到後端
+                  axios.delete('/delfood', {data: this.deleteDataIndex }, {
+                      headers: {
+                          'Content-Type': 'application/json',
+                      }})
+                      .then((response) => {
+                          console.log(response);
+                          if (response.data.code == 0) {
+                              this.$message.success('刪除成功');
+                              this.onGet()
+                          }
+                      })
+                      .catch((error) => {
+                          console.log(error);
+  
+                          this.$message.error('刪除失敗');
+                      })     
+              }
+
+      //搜尋功能
+      // remoteMethod(query) {
+      //   console.log('call remoteMoethod: ' + query);
+      //   if (query) {
+      //   axios.get("/food/name?keyword=" + query)
+      //     .then((response) => {
+      //         this.nameoptions = [];
+      //         console.log(response.data);
+      //      if (response.data.code == 0) {
+      //         for (let v of response.data.data) {
+      //         this.nameoptions.push({
+      //         namevalue: v,
+      //         label: v,
+      //         });
+      //         }
+      //         console.log(this.nameoptions);
+      //     }
+      //     })
+      //     .catch((error) => {
+      //         console.log(error);
+      //     });
+      //   } else {
+      //     this.nameoptions = [];
+      //   }
+      // },
+      // onSizeChange(size) {
+      //   this.currentPage = 1;
+      //   this.onGet();
+      // },
+      // onCurrentChange() {
+      //   this.onGet();
+      // },
+      // // 分頁被點擊了上一頁
+      // onPrevClick(page) {
+
+      // },
+      // // 分頁被點擊了下一頁
+      // onNextClick(page) {
+       
+      // },
+      // // 改變到期日排序模式
+      // onChangeExpDateMode() {
+      //   this.currentPage = 1;
+
+      //   if(this.ExpDateArrowMode == 0) this.ExpDateArrowMode = 1;        
+      //   else if(this.ExpDateArrowMode == 1) this.ExpDateArrowMode = 2;
+      //   else
+      //     this.ExpDateArrowMode = 0;
+
+      //   // 重新打API排序
+      //   this.onGet();
+      // }
+
+      }
+    }).use(ElementPlus).mount('#app')
+  </script>
+  
+
+
+
+  
+ </html>

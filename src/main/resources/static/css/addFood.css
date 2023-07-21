@@ -80,7 +80,7 @@
   }
   
   .placeholder {
-    color: #65657b;
+    color: #eee;
     font-family: sans-serif;
     left: 20px;
     line-height: 14px;
@@ -129,7 +129,7 @@
 
   .add-food-title {
     vertical-align: middle;
-    font-size: 18px; 
+    font-size: 18px; color: #eee;
     
   }
   .mask {

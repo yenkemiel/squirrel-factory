@@ -1,39 +1,50 @@
 package com.uch.finalproject.controller;
 
+import com.uch.finalproject.model.BaseResponse;
+import com.uch.finalproject.model.FoodDetailEntity;
+import com.uch.finalproject.model.FoodDetailListPageResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.*;
 import java.util.ArrayList;
-
-import com.uch.finalproject.model.*;
-import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.uch.finalproject.model.BaseResponse;
-import com.uch.finalproject.model.FoodDetailListEntity;
-import com.uch.finalproject.model.FoodResponse;
 
 
 @RestController
 public class FoodDetailListController {
+
     /* 獲取食物營養資料列表 */
+//    @RequestMapping(value = "/foodDetails", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+//    public FoodDetailListResponse foods(int page, int count, int foodIdSortMode) {
+//        return getFoodList(page, count, foodIdSortMode);
+//    }
     @RequestMapping(value = "/foodDetails", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public FoodDetailListResponse foods(int page, int count, int caloriesSortMode) {
-        return getFoodList(page, count, caloriesSortMode);
+    public FoodDetailListPageResponse foods(@RequestParam(value = "page", required = false) Integer page,
+                                            @RequestParam("count") int count,
+                                            @RequestParam("foodIdSortMode") int foodIdSortMode,
+                                            HttpSession httpSession) {
+        return getFoodList(page, count, foodIdSortMode);
     }
+
 
     /* 新增食物營養資料 */
     @RequestMapping(value = "/addfoodDetail", method = RequestMethod.POST,
-    consumes = MediaType.APPLICATION_JSON_VALUE,  // 傳入的資料格式
-    produces = MediaType.APPLICATION_JSON_VALUE)
-    public FoodDetailListResponse addfoodDetail(@RequestBody FoodDetailEntity data){
-     Connection conn = null;
-    PreparedStatement stmt = null;
+            consumes = MediaType.APPLICATION_JSON_VALUE,  // 傳入的資料格式
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public FoodDetailListPageResponse addfoodDetail(@RequestBody FoodDetailEntity data){
+        Connection conn = null;
+        PreparedStatement stmt = null;
 
         try{
-        Class.forName("com.mysql.cj.jdbc.Driver");
-        conn = DriverManager.getConnection("jdbc:mysql://localhost/foods?user=root&password=0000");
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            conn = DriverManager.getConnection("jdbc:mysql://localhost/foods?user=root&password=0000");
 
             stmt = conn.prepareStatement("INSERT INTO food_detail (name, category_no, calories, protein, saturated_fat, total_carbohydrates, dietary_fiber) " +
                     "SELECT ?, c.category_no, ?, ?, ?, ?, ? " +
@@ -50,12 +61,12 @@ public class FoodDetailListController {
 
             stmt.executeUpdate();
 
-        return new FoodDetailListResponse(0, "資料新增成功",null, 0);
+            return new FoodDetailListPageResponse(0, "資料新增成功",null, 0);
 
         }catch(SQLException e) {
-            return new FoodDetailListResponse(e.getErrorCode(), e.getMessage(),null, 0);
+            return new FoodDetailListPageResponse(e.getErrorCode(), e.getMessage(),null, 0);
         }catch(ClassNotFoundException e) {
-            return new FoodDetailListResponse(2,"資料新增失敗",null, 0);
+            return new FoodDetailListPageResponse(2,"資料新增失敗",null, 0);
         }
     }
     /* 編輯食物營養資料 */
@@ -88,12 +99,12 @@ public class FoodDetailListController {
 
             stmt.executeUpdate();
 
-            return new FoodDetailListResponse(0, "資料更新成功",null, 0);
+            return new FoodDetailListPageResponse(0, "資料更新成功",null, 0);
 
         }catch(SQLException e) {
-            return new FoodDetailListResponse(e.getErrorCode(), e.getMessage(),null, 0);
+            return new FoodDetailListPageResponse(e.getErrorCode(), e.getMessage(),null, 0);
         }catch(ClassNotFoundException e) {
-            return new FoodDetailListResponse(3,"資料更新失敗",null, 0);
+            return new FoodDetailListPageResponse(3,"資料更新失敗",null, 0);
         }
     }
     /* 刪除食物營養資料 */
@@ -113,16 +124,38 @@ public class FoodDetailListController {
 
             stmt.executeUpdate();
 
-            return new FoodDetailListResponse(0, "資料刪除成功",null, 0);
+            return new FoodDetailListPageResponse(0, "資料刪除成功",null, 0);
 
         }catch(SQLException e) {
-            return new FoodDetailListResponse(e.getErrorCode(), e.getMessage(),null, 0);
+            return new FoodDetailListPageResponse(e.getErrorCode(), e.getMessage(),null, 0);
         }catch(ClassNotFoundException e) {
-            return new FoodDetailListResponse(4,"資料刪除失敗",null, 0);
+            return new FoodDetailListPageResponse(4,"資料刪除失敗",null, 0);
+        }
+    }
+    /* 下載CSV資料 */
+    @RequestMapping(value = "/foodDetails/{uid}/csv")
+    public void exportCsv(HttpServletResponse response, @PathVariable String uid) throws IOException, ServletException {
+        response.setContentType("text/csv");
+        response.setCharacterEncoding("UTF-8");
+        PrintWriter writer = response.getWriter();
+
+        // 獲取參數，例如 page、count 和 expdateSortMode
+        int page = 1; // 適當設置默認值
+        int count = 10; // 適當設置默認值
+        int foodIdSortMode = 0; // 適當設置默認值
+
+        FoodDetailListPageResponse foods = getFoodList(page, count, foodIdSortMode);
+        try (CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT)) {
+            csvPrinter.printRecord("編號","名稱", "類別編號", "類別", "熱量(大卡)", "蛋白質(公克)", "飽和脂肪(公克)", "總碳水化合物(公克)", "膳食纖維(公克)");
+            for (FoodDetailEntity foodDetail : foods.getData().getFoods()) {
+                csvPrinter.printRecord(foodDetail.getFoodId(), foodDetail.getName(), foodDetail.getCategoryNo(), foodDetail.getCategory(), foodDetail.getCalories(), foodDetail.getProtein(), foodDetail.getSaturatedFat(), foodDetail.getTotalCarbohydrates(), foodDetail.getDietaryFiber());
+            }
+        } catch (IOException e) {
+            throw new ServletException("Generate CSV failed");
         }
     }
     /* 食物營養列表陣列 */
-    private FoodDetailListResponse getFoodList(int page, int count, int caloriesSortMode) {
+    private FoodDetailListPageResponse getFoodList(int page, int count, int foodIdSortMode) {
         Connection conn = null;
         Statement stmt = null;
         ResultSet rs = null;
@@ -134,11 +167,12 @@ public class FoodDetailListController {
 
             stmt = conn.createStatement();
 
-            // ToDo: 改query:  select name, category, buy_date, exp_date, quantity  from foods f join food_detail fd where f.food_id = fd.id;
-            rs = stmt.executeQuery("select fd.food_id , name, fd.category_no, category, calories , protein , saturated_fat, total_carbohydrates , dietary_fiber " +
-                    "from food_detail fd join category c on c.category_no = fd.category_no " +
-                    (caloriesSortMode == 0 ? "" : (caloriesSortMode == 1 ? "order by calories ASC":"order by calories DESC") ) +
-                    " limit " + count + " offset " + ((page-1) * count));
+            String sortDirection = (foodIdSortMode == 1) ? "DESC" : "ASC";
+            rs = stmt.executeQuery("SELECT fd.food_id, name, fd.category_no, category, calories, protein, saturated_fat, total_carbohydrates, dietary_fiber " +
+                    "FROM food_detail fd JOIN category c ON c.category_no = fd.category_no " +
+                    "ORDER BY food_id " + sortDirection + " " +
+                    "LIMIT " + count + " OFFSET " + ((page - 1) * count));
+
 
             ArrayList<FoodDetailEntity> foods = new ArrayList<>();
             while(rs.next()) {
@@ -161,14 +195,14 @@ public class FoodDetailListController {
             rs.next();
             int total = rs.getInt("c");
 
-            return new FoodDetailListResponse(0, "成功", foods, total);
+            return new FoodDetailListPageResponse(0, "成功", foods, total);
         } catch(SQLException e) {
-            return new FoodDetailListResponse(e.getErrorCode(), "select fd.food_id , name, category, calories , protein , saturated_fat, total_carbohydrates , dietary_fiber " +
+            return new FoodDetailListPageResponse(e.getErrorCode(), "select fd.food_id , name, category, calories , protein , saturated_fat, total_carbohydrates , dietary_fiber " +
                     "from food_detail fd join category c on c.category_no = fd.category_no " +
-                    (caloriesSortMode == 0 ? "" : (caloriesSortMode == 1 ? "order by calories ASC":"order by calories DESC") ) +
+                    (foodIdSortMode == 0 ? "" : (foodIdSortMode == 1 ? "order by food_id ASC":"order by food_id DESC") ) +
                     " limit " + count + " offset " + ((page-1) * count), null, 0);
         } catch(ClassNotFoundException e) {
-            return new FoodDetailListResponse(1, "無法註冊驅動程式", null, 0);
+            return new FoodDetailListPageResponse(1, "無法註冊驅動程式", null, 0);
         }
     }
 }

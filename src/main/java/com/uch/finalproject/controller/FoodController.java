@@ -1,5 +1,7 @@
 package com.uch.finalproject.controller;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.Statement;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -8,24 +10,23 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import com.uch.finalproject.model.*;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.uch.finalproject.model.BaseResponse;
-import com.uch.finalproject.model.FoodEntity;
-import com.uch.finalproject.model.FoodResponse;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class FoodController {
     @RequestMapping(value = "/foods", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public FoodResponse foods() {
-        return getFoodList();
+    public FoodPageResponse foods(int page, int count, int expDateSortMode, HttpSession httpSession) {
+        return getFoodList(page, count, expDateSortMode);
     }
 
-@RequestMapping(value = "/food", method = RequestMethod.POST,
+    @RequestMapping(value = "/food", method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE,  // 傳入的資料格式
             produces = MediaType.APPLICATION_JSON_VALUE)
     public BaseResponse addFood(@RequestBody FoodEntity data) {
@@ -107,7 +108,7 @@ public class FoodController {
             return new BaseResponse(1,"無法註冊驅動程式");
         }
     }
-
+    //刪除食物
     @RequestMapping(value = "/delfood", method = RequestMethod.DELETE,
             consumes = MediaType.APPLICATION_JSON_VALUE,  // 傳入的資料格式
             produces = MediaType.APPLICATION_JSON_VALUE)
@@ -123,7 +124,7 @@ public class FoodController {
             stmt.setInt(1, data.getStockId());
 
             stmt.executeUpdate();
-            
+
             return new BaseResponse(0, "刪除成功");
 
         }catch(SQLException e) {
@@ -132,10 +133,6 @@ public class FoodController {
             return new BaseResponse(1,"無法註冊驅動程式");
         }
     }
-<<<<<<< Updated upstream
-
-    private FoodResponse getFoodList() {
-=======
     //搜尋食物
     @RequestMapping(value = "/food", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public FoodPageResponse searchFood(@RequestParam("name") String keyword, int page, int count, int expDateSortMode) {
@@ -216,7 +213,6 @@ public class FoodController {
 
 
     private FoodPageResponse getFoodList(int page, int count, int expDateSortMode) {
->>>>>>> Stashed changes
         Connection conn = null;
         Statement stmt = null;
         ResultSet rs = null;
@@ -225,9 +221,12 @@ public class FoodController {
             Class.forName("com.mysql.cj.jdbc.Driver");
             conn = DriverManager.getConnection("jdbc:mysql://localhost/foods?user=root&password=0000");
             stmt = conn.createStatement();
-            // ToDo: 改query:  select name, category, buy_date, exp_date, quantity  from foods f join food_detail fd where f.food_id = fd.id;
-            rs = stmt.executeQuery("select f.stock_id, fd.food_id, name, category, buy_date, exp_date, quantity from food_stock f join food_detail fd on f.food_id = fd.food_id join category c on fd.category_no = c.category_no");
-            
+
+            String sortDirection = (expDateSortMode == 1) ? "DESC" : "ASC";
+            rs = stmt.executeQuery("select f.stock_id, fd.food_id, name, category, buy_date, exp_date, quantity from food_stock f join food_detail fd on f.food_id = fd.food_id join category c on fd.category_no = c.category_no "+
+                    "ORDER BY exp_date " + sortDirection  +
+                    " limit " + count + " offset " + ((page-1) * count));
+
             ArrayList<FoodEntity> foods = new ArrayList<>();
             while(rs.next()) {
                 FoodEntity foodEntity = new FoodEntity();
@@ -242,11 +241,34 @@ public class FoodController {
                 foods.add(foodEntity);
             }
 
-            return new FoodResponse(0, "成功", foods);
+            // 取得全部數量
+            rs = stmt.executeQuery("SELECT count(*) as c FROM food_stock f JOIN food_detail fd ON f.food_id = fd.food_id JOIN category c ON fd.category_no = c.category_no ");
+            rs.next();
+            int total = rs.getInt("c");
+
+            return new FoodPageResponse(0, "成功", foods, total);
         } catch(SQLException e) {
-            return new FoodResponse(e.getErrorCode(), e.getMessage(), null);
+            return new FoodPageResponse(e.getErrorCode(), e.getMessage(), null,0);
         } catch(ClassNotFoundException e) {
-            return new FoodResponse(1, "無法註冊驅動程式", null);
+            return new FoodPageResponse(1, "無法註冊驅動程式", null,0);
         }
+
+        // 取得全部數量
+        //     rs = stmt.executeQuery("select count(*) as c from food_stock");
+        //     rs.next();
+        //     int total = rs.getInt("c");
+
+        //     return new FoodResponse(0, "成功", data, total);
+        // } catch(SQLException e) {
+        //     return new FoodDetailListResponse(e.getErrorCode(), "select fd.food_id , name, category, calories , protein , saturated_fat, total_carbohydrates , dietary_fiber " +
+        //             "from food_detail fd join category c on c.category_no = fd.category_no " +
+        //             (caloriesSortMode == 0 ? "" : (caloriesSortMode == 1 ? "order by calories ASC":"order by calories DESC") ) +
+        //             " limit " + count + " offset " + ((page-1) * count), null, 0);
+        // } catch(ClassNotFoundException e) {
+        //     return new FoodDetailListResponse(1, "無法註冊驅動程式", null, 0);
+        // }
+
+
+
     }
 }

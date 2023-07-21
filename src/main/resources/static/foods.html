@@ -2,22 +2,12 @@
 <html lang="zh-TW">
 
 <head>
-<<<<<<< Updated upstream
-  <meta charset="UTF-8">
-  <title>食物管理</title>
-  <link rel="stylesheet" href="css/food-style.css">
-  <link rel="stylesheet" href="css/foodDetail-style.css">
-  <link rel="stylesheet" href="css/addFood.css">
-  <!-- 這是按鍵的CSS -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-=======
     <meta charset="UTF-8">
     <title>食物管理</title>
 
     <!-- 這是banner的CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
     <link rel="stylesheet" href="css/banner-new.css">
->>>>>>> Stashed changes
 
     <!-- 這是表格的CSS -->
     <link rel="stylesheet" href="css/food-style.css">
@@ -37,18 +27,6 @@
     <!-- Import style -->
     <link rel="stylesheet" href="//unpkg.com/element-plus/dist/index.css"/>
     <!-- Import Vue 3 -->
-<<<<<<< Updated upstream
-  <script src="//unpkg.com/vue@3"></script>
-  <!-- Import component library -->
-  <script src="//unpkg.com/element-plus"></script>
-  <link rel="stylesheet" href="css/demo-remote-select.css" />
-</head>
-
-<body id="app">
-  <div class="container">
-    <el-button type="warning" class="btn" @click="showAddFoodModal = true">新增</el-button>
-
-=======
     <script src="//unpkg.com/vue@3"></script>
     <!-- Import component library -->
     <script src="//unpkg.com/element-plus"></script>
@@ -119,21 +97,9 @@
 <div class="container">
     <el-button type="warning" class="btn" @click="showAddFoodModal = true">新增</el-button>
     <!-- 表格start -->
->>>>>>> Stashed changes
     <table>
         <thead>
         <tr>
-<<<<<<< Updated upstream
-          <th>名稱</th>
-          <th>類別</th>
-          <th>採購日</th>
-          <th style="display: flex; height: 60px; align-items: center; justify-content: center;"
-          @click="onChangeCaloriesMode">
-          到期日<div v-if="caloriesArrowMode != 0" :class="[caloriesArrowMode == 1 ? '':'arrow-down']">⯅</div>
-          </th>
-          <th>數量</th>
-          <th>變更</th>
-=======
             <th>名稱</th>
             <th>類別</th>
             <th>採購日</th>
@@ -143,7 +109,6 @@
                 <div :class="[expDateArrowMode === 0 ? '' : 'arrow-down']">⯅</div>
             <th>數量</th>
             <th>變更</th>
->>>>>>> Stashed changes
         </tr>
         <thead>
         <tbody>
@@ -161,26 +126,15 @@
                                 :size="size"/>
             </td>
             <td>
-<<<<<<< Updated upstream
-              <div v-if="!showEditMode[index]">{{ item.quantity }}</div>
-              <el-input-number v-else v-model="foods[index].quantity" @change="handleChange" />
-            </td>            
-=======
                 <div v-if="!showEditMode[index]">{{ item.quantity }}</div>
                 <el-input-number v-else v-model="foods[index].quantity" @change="handleChange"/>
             </td>
->>>>>>> Stashed changes
             <td>
               <span v-if="!showEditMode[index]" class="material-symbols-outlined" @click="showEditMode[index] = true">
-                編輯
+                edit_note
               </span>
-<<<<<<< Updated upstream
-              <span @click="onDelete(item.stockId)" v-if="!showEditMode[index]" class="material-symbols-outlined">
-                刪除
-=======
                 <span @click="onDelete(item.stockId)" v-if="!showEditMode[index]" class="material-symbols-outlined">
                 delete
->>>>>>> Stashed changes
               </span>
                 <span v-if="showEditMode[index]" class="material-symbols-outlined" @click="onUpdate(index)">
                 確定
@@ -192,10 +146,7 @@
         </tr>
         </tbody>
     </table>
-<<<<<<< Updated upstream
-=======
     <!-- 表格end -->
->>>>>>> Stashed changes
 
     <!-- 對話盒的淡黑色背景 -->
     <div v-if="showFoodDetail" class="mask"></div>
@@ -274,44 +225,7 @@
 
     <!-- 新增食物的對話盒開始-->
     <div class="form" v-if="showAddFoodModal">
-<<<<<<< Updated upstream
-      <div class="title">新增食物資料</div>
-      
-      <div class="input-container ic2">
-        <input id="firstname" class="input" type="text" v-model="newFoodData.name" placeholder=" " />
-      <div class="cut"></div>
-        <label for="firstname" class="placeholder">食物名稱</label>
-      </div>
-
-      <!-- <div class="input-container ic2">
-        <span class="add-food-title">搜尋食物名稱&nbsp;&nbsp;</span>
-        <el-select v-model="newFoodData.name" filterable remote reserve-value placeholder="Please enter a value" remote-show-suffix
-          :remote-method="remoteMethod" :loading="loading">
-          <el-option v-for="item in nameoptions" :key="item.namevalue" :label="item.namelabel" :value="item.namevalue" />
-      </el-select>
-      <el-button type="primary" @click="showResult = true">送出</el-button>
-
-      <el-dialog v-model="showResult" title="結果" width="30%" :before-close="handleClose">
-          <span>{{namevalue}}</span>
-          <template #footer>
-              <span class="dialog-footer">
-                  <el-button type="primary" @click="showResult = false">
-                      關閉
-                  </el-button>
-              </span>
-          </template>
-      </el-dialog>
-    </div> -->
-
-      <div class="input-container ic2">
-        <span class="add-food-title">種類&nbsp;&nbsp;</span>
-        <el-select v-model="newFoodData.category" class="m-2" placeholder="Select" size="large">
-          <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />
-        </el-select>
-      </div>
-=======
         <div class="title">新增食物資料</div>
->>>>>>> Stashed changes
 
         <div class="input-container ic2">
             <input id="foodname" class="input" type="text" v-model="newFoodData.name" placeholder=" "/>
@@ -365,110 +279,6 @@
     // Vue初始化
     const {createApp} = Vue
 
-<<<<<<< Updated upstream
-  createApp({
-    data() {
-      // 網頁要使用的變數放這裡
-      return {
-        message: 'Hello Vue!',
-        foods: [],
-        foodDetail: {},
-        showFoodDetail: false,
-        showAddFoodModal: false,
-        // nameoptions:[],
-        // loading: false,
-        // showResult: false,
-        
-        //分頁使用的變數
-        currentPage: 1,  // 目前在哪一頁
-        pageSize: 12,
-        total: 0,
-        caloriesArrowMode: 0, // 0=不排序, 1=由大到小, 2=由小到大
-
-       // 使用者的選擇種類會存在這邊
-       //categoryValue: '種類',
-        options: [
-          {
-            value: '水果類',
-            label: '水果類',
-          },
-          {
-            value: '蔬菜類',
-            label: '蔬菜類',
-          },
-          {
-            value: '豆類',
-            label: '豆類',
-          },
-          {
-            value: '菇類',
-            label: '菇類',
-          },
-          {
-            value: '堅果及種子類',
-            label: '堅果及種子類',
-          },
-          {
-            value: '穀物類',
-            label: '穀物類',
-          },
-          {
-            value: '油脂類',
-            label: '油脂類',
-          },
-          {
-            value: '藻類',
-            label: '藻類',
-          },
-          {
-            value: '乳品類',
-            label: '乳品類',
-          },
-          {
-            value: '蛋類',
-            label: '蛋類',
-          },
-          {
-            value: '肉類',
-            label: '肉類',
-          },
-          {
-            value: '魚貝類',
-            label: '魚貝類',
-          },
-          {
-            value: '加工調理食品及其他類',
-            label: '加工調理食品及其他類',
-          },
-          {
-            value: '飲料類',
-            label: '飲料類',
-          },
-          {
-            value: '澱粉類',
-            label: '澱粉類',
-          },
-          {
-            value: '糖類',
-            label: '糖類',
-          },
-          {
-            value: '糕餅點心類',
-            label: '糕餅點心類',
-          },
-          {
-            value: '調味料及香辛料類',
-            label: '調味料及香辛料類',
-          },
-        ],
-
-        newFoodData: {
-          name: '',
-          category: '',
-          buyDate: null,
-          expDate: null,
-          quantity: 0,
-=======
     createApp({
         data() {
             // 網頁要使用的變數放這裡
@@ -582,7 +392,6 @@
                 },
 
             }
->>>>>>> Stashed changes
         },
         // 當網頁載入完成後會被Vue框架呼叫
         mounted() {
@@ -616,147 +425,6 @@
                 // 將新增資料的對話盒顯示出來
                 console.log(JSON.stringify(this.newFoodData));
 
-<<<<<<< Updated upstream
-      }
-    },
-    // 當網頁載入完成後會被Vue框架呼叫
-    mounted() {
-      this.onGet();
-    },
-    // 網頁要用的方法寫在這裡
-    methods: {
-      onGet() {
-        // 打API
-        axios.get("/foods")
-          .then((response) => {
-            // get完成後收到的資料可以在這裡處理
-            console.log(response);
-            // 將API的商品資料存到Vue建立的products變數
-            if (response.data.code == 0) {
-              // 將API拿到的data存到Vue變數
-              this.foods = response.data.data;
-            }
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-      },
-      // 新增資料
-      onAdd() {
-        // 將新增資料的對話盒顯示出來
-        console.log(JSON.stringify(this.newFoodData));
-
-        // 打API將資料送到後端
-        axios.post('/food', this.newFoodData)
-          .then((response) => {
-            console.log(response);
-            if (response.data.code == 0) {
-              this.$message.success('新增成功');
-              this.showAddFoodModal = false;
-              this.onGet();
-              //this.showEditMode[index] = false;
-            
-            }
-          })
-          .catch((error) => {
-            console.log(error);
-            // 新增失敗
-
-            this.$message.error('新增失敗');
-          });
-
-      },
-      // 蔬果名稱被點擊時呼叫的方法
-      onShowFoodDetail(food_id) {
-        // 顯示食品詳細資訊的對話盒
-        this.showFoodDetail = true;
-        // alert('id=' + food_id + '被點擊了');
-
-        axios.get("/foodDetail?id=" + food_id)
-          .then((response) => {
-            // get完成後收到的資料可以在這裡處理
-            console.log(response);
-            // 將API的商品資料存到Vue建立的products變數
-            if (response.data.code == 0) {
-              // 將API拿到的data存到Vue變數
-              this.foodDetail = response.data.data;
-            }
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-      },
-      onUpdate(index) {
-				// 將新增資料的對話盒顯示出來
-				console.log(JSON.stringify(this.foods[index]));
-
-				// 打API將資料送到後端
-				axios.put('/food', this.foods[index])
-					.then((response) => {
-						console.log(response);
-						if (response.data.code == 0) {
-							this.$message.success('更新成功');
-							this.showEditMode[index] = false;
-							this.onGet();
-						}
-					})
-					.catch((error) => {
-						console.log(error);
-						// 新增失敗
-						
-						this.$message.error('更新失敗');
-					});
-			},
-      onDelete(stockId) {
-				this.deleteDataIndex.stockId = stockId;
-				console.log(JSON.stringify(this.deleteDataIndex));
-				//打API將資料送到後端
-				axios.delete('/delfood', {data: this.deleteDataIndex }, {
-					headers: {
-						'Content-Type': 'application/json',
-					}})
-					.then((response) => {
-						console.log(response);
-						if (response.data.code == 0) {
-							this.$message.success('刪除成功');
-							this.onGet()
-						}
-					})
-					.catch((error) => {
-						console.log(error);
-
-						this.$message.error('刪除失敗');
-					})     
-			}
-      // ,
-      //搜尋功能
-      // remoteMethod(query) {
-      //   console.log('call remoteMoethod: ' + query);
-      //   if (query) {
-      //   axios.get("/food/name?keyword=" + query)
-      //     .then((response) => {
-      //         this.nameoptions = [];
-      //         console.log(response.data);
-      //      if (response.data.code == 0) {
-      //         for (let v of response.data.data) {
-      //         this.nameoptions.push({
-      //         namevalue: v,
-      //         label: v,
-      //         });
-      //         }
-      //         console.log(this.nameoptions);
-      //     }
-      //     })
-      //     .catch((error) => {
-      //         console.log(error);
-      //     });
-      //   } else {
-      //     this.nameoptions = [];
-      //   }
-      // }
-    }
-  }).use(ElementPlus).mount('#app')
-=======
                 // 打API將資料送到後端
                 axios.post('/food', this.newFoodData)
                     .then((response) => {
@@ -936,7 +604,6 @@
         // }
         //}
     }).use(ElementPlus).mount('#app')
->>>>>>> Stashed changes
 </script>
 
 </html>
