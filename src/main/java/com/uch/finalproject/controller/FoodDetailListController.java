@@ -19,10 +19,6 @@ import java.util.ArrayList;
 public class FoodDetailListController {
 
     /* 獲取食物營養資料列表 */
-//    @RequestMapping(value = "/foodDetails", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-//    public FoodDetailListResponse foods(int page, int count, int foodIdSortMode) {
-//        return getFoodList(page, count, foodIdSortMode);
-//    }
     @RequestMapping(value = "/foodDetails", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public FoodDetailListPageResponse foods(@RequestParam(value = "page", required = false) Integer page,
                                             @RequestParam("count") int count,
@@ -30,7 +26,6 @@ public class FoodDetailListController {
                                             HttpSession httpSession) {
         return getFoodList(page, count, foodIdSortMode);
     }
-
 
     /* 新增食物營養資料 */
     @RequestMapping(value = "/addfoodDetail", method = RequestMethod.POST,
@@ -67,6 +62,7 @@ public class FoodDetailListController {
             return new FoodDetailListPageResponse(2,"資料新增失敗",null, 0);
         }
     }
+
     /* 編輯食物營養資料 */
     @RequestMapping(value = "/updatefoodDetail", method = RequestMethod.PUT,
             consumes = MediaType.APPLICATION_JSON_VALUE,  // 傳入的資料格式
@@ -182,9 +178,9 @@ public class FoodDetailListController {
 
             return new FoodDetailListPageResponse(0, "資料搜尋成功", foods, total);
         } catch(SQLException e) {
-            return new FoodDetailListPageResponse(e.getErrorCode(), "資料搜尋失敗", null, 0);
+            return new FoodDetailListPageResponse(e.getErrorCode(), e.getMessage(), null, 0);
         } catch(ClassNotFoundException e) {
-            return new FoodDetailListPageResponse(1, "無法註冊驅動程式", null, 0);
+            return new FoodDetailListPageResponse(5, "資料搜尋成功", null, 0);
         }
     }
 
@@ -210,6 +206,7 @@ public class FoodDetailListController {
             throw new ServletException("Generate CSV failed");
         }
     }
+
     /* 食物營養列表陣列 */
     private FoodDetailListPageResponse getFoodList(int page, int count, int foodIdSortMode) {
         Connection conn = null;
@@ -253,10 +250,7 @@ public class FoodDetailListController {
 
             return new FoodDetailListPageResponse(0, "成功", foods, total);
         } catch(SQLException e) {
-            return new FoodDetailListPageResponse(e.getErrorCode(), "select fd.food_id , name, category, calories , protein , saturated_fat, total_carbohydrates , dietary_fiber " +
-                    "from food_detail fd join category c on c.category_no = fd.category_no " +
-                    (foodIdSortMode == 0 ? "" : (foodIdSortMode == 1 ? "order by food_id ASC":"order by food_id DESC") ) +
-                    " limit " + count + " offset " + ((page-1) * count), null, 0);
+            return new FoodDetailListPageResponse(e.getErrorCode(), e.getMessage(), null, 0);
         } catch(ClassNotFoundException e) {
             return new FoodDetailListPageResponse(1, "無法註冊驅動程式", null, 0);
         }

@@ -60,22 +60,15 @@
                 <li><a href="/">登入畫面</a></li>
                 <li class="active"><a href="/foods.html">食物庫存</a></li>
                 <li><a href="/fooddetaillist.html">營養資訊</a></li>
-                <li><a href="#">採購清單</a></li>
+                <li><a href="/tobuy.html">採購清單</a></li>
             </ul>
         </nav>
     </div>
 </header>
 
-
-<!--&lt;!&ndash; 搜尋 &ndash;&gt;-->
-<!--<form v-on:submit.prevent="onSearch" autocomplete="off">-->
-<!--    <label for="search">Search</label>-->
-<!--    <input id="search" type="search" v-model="keyword">-->
-<!--    <span class="caret"></span>-->
-<!--</form>-->
 <!-- 搜尋列start -->
 <form style="margin-left: 300px; margin-top: 20px;" v-on:submit.prevent="onSearch" autocomplete="off">
-    <label for="search">Search</label>
+    <label for="search">Search </label>
     <input id="search" type="search" v-model="keyword">
     <span class="caret"></span>
 </form>

@@ -22,11 +22,14 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class FoodController {
+
+    /* 獲取食物倉庫資料列表 */
     @RequestMapping(value = "/foods", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public FoodPageResponse foods(int page, int count, int expDateSortMode, HttpSession httpSession) {
         return getFoodList(page, count, expDateSortMode);
     }
 
+    /* 新增食物資料 */
     @RequestMapping(value = "/food", method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE,  // 傳入的資料格式
             produces = MediaType.APPLICATION_JSON_VALUE)
@@ -69,16 +72,16 @@ public class FoodController {
 
             stmt.executeUpdate();
 
-            return new BaseResponse(0, "新增成功");
+            return new BaseResponse(0, "資料新增成功");
 
         }catch(SQLException e) {
             return new BaseResponse(e.getErrorCode(), e.getMessage());
         }catch(ClassNotFoundException e) {
-            return new BaseResponse(1,"無法註冊驅動程式");
+            return new BaseResponse(2,"資料新增失敗");
         }
     }
 
-    //編輯食物
+    /* 編輯食物資料 */
     @RequestMapping(value = "/food", method = RequestMethod.PUT,
             consumes = MediaType.APPLICATION_JSON_VALUE,  // 傳入的資料格式
             produces = MediaType.APPLICATION_JSON_VALUE)
@@ -101,15 +104,16 @@ public class FoodController {
             stmt.executeUpdate();
 
 
-            return new BaseResponse(0, "新增成功");
+            return new BaseResponse(0, "資料更新成功");
 
         }catch(SQLException e) {
             return new BaseResponse(e.getErrorCode(), e.getMessage());
         }catch(ClassNotFoundException e) {
-            return new BaseResponse(1,"無法註冊驅動程式");
+            return new BaseResponse(3,"資料更新失敗");
         }
     }
-    //刪除食物
+
+    /* 刪除食物資料 */
     @RequestMapping(value = "/delfood", method = RequestMethod.DELETE,
             consumes = MediaType.APPLICATION_JSON_VALUE,  // 傳入的資料格式
             produces = MediaType.APPLICATION_JSON_VALUE)
@@ -126,15 +130,16 @@ public class FoodController {
 
             stmt.executeUpdate();
 
-            return new BaseResponse(0, "刪除成功");
+            return new BaseResponse(0, "資料刪除成功");
 
         }catch(SQLException e) {
             return new BaseResponse(e.getErrorCode(), e.getMessage());
         }catch(ClassNotFoundException e) {
-            return new BaseResponse(1,"無法註冊驅動程式");
+            return new BaseResponse(4,"資料刪除失敗");
         }
     }
-    //搜尋食物
+
+    /* 搜尋食物資料 */
     @RequestMapping(value = "/food", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public FoodPageResponse searchFood(@RequestParam("name") String keyword, int page, int count, int expDateSortMode) {
         return search("fd.name", keyword, "", page, count, expDateSortMode);
@@ -182,13 +187,13 @@ public class FoodController {
 
             return new FoodPageResponse(0, "資料搜尋成功", foods, total);
         } catch (ClassNotFoundException e) {
-            return new FoodPageResponse(1, "資料搜尋失敗", null, 0);
+            return new FoodPageResponse(5, "資料搜尋失敗", null, 0);
         } catch (SQLException e) {
             return new FoodPageResponse(e.getErrorCode(), e.getMessage(), null, 0);
         }
     }
 
-    // 過期食物通知
+    /* 過期食物通知 */
     @RequestMapping(value = "/expfood", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public FoodPageResponse searchExpFood(int page, int count, int expDateSortMode) {
         return searchExp(page, count, expDateSortMode);
@@ -212,7 +217,6 @@ public class FoodController {
                     " ORDER BY exp_date " + sortDirection +
                     " LIMIT " + count + " OFFSET " + ((page - 1) * count);
 
-            // 字串搜尋
             stmt = conn.prepareStatement(queryString);
             rs = stmt.executeQuery(queryString);
 
@@ -237,18 +241,15 @@ public class FoodController {
             rs.next();
             int total = rs.getInt("c");
 
-            return new FoodPageResponse(0, "資料搜尋成功", foods, total);
+            return new FoodPageResponse(0, "過期食物資料載入成功", foods, total);
         } catch (ClassNotFoundException e) {
-            return new FoodPageResponse(1, "資料搜尋失敗", null, 0);
+            return new FoodPageResponse(6, "過期食物資料載入失敗", null, 0);
         } catch (SQLException e) {
             return new FoodPageResponse(e.getErrorCode(), e.getMessage(), null, 0);
         }
     }
 
-
-
-
-            /* 下載CSV資料 */
+    /* 下載CSV資料 */
     @RequestMapping(value = "/foods/{uid}/csv")
     public void exportCsv(HttpServletResponse response, @PathVariable String uid) throws IOException, ServletException {
         response.setContentType("text/csv");
@@ -271,8 +272,7 @@ public class FoodController {
         }
     }
 
-
-
+    /* 食物倉庫列表陣列 */
     private FoodPageResponse getFoodList(int page, int count, int expDateSortMode) {
         Connection conn = null;
         Statement stmt = null;
@@ -313,23 +313,5 @@ public class FoodController {
         } catch(ClassNotFoundException e) {
             return new FoodPageResponse(1, "無法註冊驅動程式", null,0);
         }
-
-        // 取得全部數量
-        //     rs = stmt.executeQuery("select count(*) as c from food_stock");
-        //     rs.next();
-        //     int total = rs.getInt("c");
-
-        //     return new FoodResponse(0, "成功", data, total);
-        // } catch(SQLException e) {
-        //     return new FoodDetailListResponse(e.getErrorCode(), "select fd.food_id , name, category, calories , protein , saturated_fat, total_carbohydrates , dietary_fiber " +
-        //             "from food_detail fd join category c on c.category_no = fd.category_no " +
-        //             (caloriesSortMode == 0 ? "" : (caloriesSortMode == 1 ? "order by calories ASC":"order by calories DESC") ) +
-        //             " limit " + count + " offset " + ((page-1) * count), null, 0);
-        // } catch(ClassNotFoundException e) {
-        //     return new FoodDetailListResponse(1, "無法註冊驅動程式", null, 0);
-        // }
-
-
-
     }
 }

@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Data
 public class FoodEntity {
-    public ArrayList<FoodEntity> foods;
+//    public ArrayList<FoodEntity> foods;
     int stockId;
     int foodId;
     String name;

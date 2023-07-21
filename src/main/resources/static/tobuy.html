@@ -1,373 +1,379 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-TW" xmlns="http://www.w3.org/1999/html">
 
 <head>
     <meta charset="utf-8">
     <title>採購清單</title>
 
-  <!-- 這是banner的CSS -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
-  <link rel="stylesheet" href="css/banner-new.css">
+    <!-- 這是banner的CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+    <link rel="stylesheet" href="css/banner-new.css">
 
-<!-- 這是表格的CSS -->
-  <link href="https://unpkg.com/tailwindcss@1.5.2/dist/tailwind.min.css" rel="stylesheet">
+    <!-- 這是表格的CSS -->
+    <link rel="stylesheet" href="css/food-style.css">
+    <link rel="stylesheet" href="css/foodDetail-style.css">
+    <link rel="stylesheet" href="css/addFood.css">
 
-  <!-- 這是按鍵的CSS -->
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <!-- 這是按鍵的CSS -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 
-  <!-- 引入axios套件，用來透過HTTP協定在網頁內呼叫後端的API -->
-  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <!-- 引入axios套件，用來透過HTTP協定在網頁內呼叫後端的API -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
-  <!-- 引入Vue.js -->
-  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <!-- 引入Vue.js -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 
-  <!-- 引入Element UI介面庫-->
-  <!-- Import style -->
-  <link rel="stylesheet" href="//unpkg.com/element-plus/dist/index.css" />
+    <!-- 引入Element UI介面庫-->
+    <!-- Import style -->
+    <link rel="stylesheet" href="//unpkg.com/element-plus/dist/index.css" />
     <!-- Import Vue 3 -->
-  <script src="//unpkg.com/vue@3"></script>
-  <!-- Import component library -->
-  <script src="//unpkg.com/element-plus"></script>
-  <link rel="stylesheet" href="css/demo-remote-select.css" />
+    <script src="//unpkg.com/vue@3"></script>
+    <!-- Import component library -->
+    <script src="//unpkg.com/element-plus"></script>
+    <link rel="stylesheet" href="css/demo-remote-select.css" />
 </head>
 
-<body id="app" style="padding-top: 98px; padding-left: 0; padding-right: 0;">
-    <!-- 橫式選單 -->
-    <header class="header" role="banner">
-     <div class="container">
-       <nav><ul>
-           <li><a href="#">登入畫面</a></li>
-           <li><a href="#">食物庫存</a></li>
-           <li><a href="#">營養資訊</a></li>
-           <li class="active"><a href="#">採購清單</a></li>
-         </ul></nav>
-     </div>
-   </header>
-   
-   <div class="h-screen overflow-scroll flex items-start justify-center" style="background: #edf2f7;">
-    <div class="-my-2 py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 pr-10 lg:px-8">
-        
-                <!-- <div class="align-middle rounded-tl-lg rounded-tr-lg inline-block w-full py-4 overflow-hidden bg-white shadow-lg px-12">
-                    <div class="flex justify-between">
-                        <div class="inline-flex border rounded w-7/12 px-2 lg:px-6 h-12 bg-transparent">
-                            <div class="flex flex-wrap items-stretch w-full h-full mb-6 relative">
-                                <div class="flex">
-                                    <span class="flex items-center leading-normal bg-transparent rounded rounded-r-none border border-r-0 border-none lg:px-3 py-2 whitespace-no-wrap text-grey-dark text-sm">
-                                        <svg width="18" height="18" class="w-4 lg:w-auto" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M8.11086 15.2217C12.0381 15.2217 15.2217 12.0381 15.2217 8.11086C15.2217 4.18364 12.0381 1 8.11086 1C4.18364 1 1 4.18364 1 8.11086C1 12.0381 4.18364 15.2217 8.11086 15.2217Z" stroke="#455A64" stroke-linecap="round" stroke-linejoin="round" />
-                                            <path d="M16.9993 16.9993L13.1328 13.1328" stroke="#455A64" stroke-linecap="round" stroke-linejoin="round" />
-                                        </svg>
-                                    </span>
-                                </div>
-                                <input type="text" class="flex-shrink flex-grow flex-auto leading-normal tracking-wide w-px flex-1 border border-none border-l-0 rounded rounded-l-none px-3 relative focus:outline-none text-xxs lg:text-xs lg:text-base text-gray-500 font-thin" placeholder="Search">
-                            </div>
-                        </div>
-                    </div>
-                </div> -->
-        
-        
-        
-        <div class="align-middle rounded-tl-lg rounded-tr-lg inline-block w-full py-4 overflow-hidden bg-white shadow-lg px-12">
-                    <div class="flex justify-between">
-                        <div class="inline-flex border rounded w-7/12 px-2 lg:px-6 h-12 bg-transparent">
-                            <div class="flex flex-wrap items-stretch w-full h-full mb-6 relative">
-                                <div class="flex">
-                                    <span class="flex items-center leading-normal bg-transparent rounded rounded-r-none border border-r-0 border-none lg:px-3 py-2 whitespace-no-wrap text-grey-dark text-sm">
-                                        <svg width="18" height="18" class="w-4 lg:w-auto" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M8.11086 15.2217C12.0381 15.2217 15.2217 12.0381 15.2217 8.11086C15.2217 4.18364 12.0381 1 8.11086 1C4.18364 1 1 4.18364 1 8.11086C1 12.0381 4.18364 15.2217 8.11086 15.2217Z" stroke="#455A64" stroke-linecap="round" stroke-linejoin="round" />
-                                            <path d="M16.9993 16.9993L13.1328 13.1328" stroke="#455A64" stroke-linecap="round" stroke-linejoin="round" />
-                                        </svg>
-                                    </span>
-                                </div>
-                                <input type="text" class="flex-shrink flex-grow flex-auto leading-normal tracking-wide w-px flex-1 border border-none border-l-0 rounded rounded-l-none px-3 relative focus:outline-none text-xxs lg:text-xs lg:text-base text-gray-500 font-thin" placeholder="Search">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-        <div class="align-middle inline-block min-w-full shadow overflow-hidden bg-white shadow-dashboard px-8 pt-3 rounded-bl-lg rounded-br-lg">
-                    <table class="min-w-full">
-                        <thead>
-                            <tr>
-                                <th class="px-6 py-3 border-b-2 border-gray-300 text-left leading-4 text-blue-500 tracking-wider">編號</th>
-                                <th class="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider">名稱</th>
-                                <th class="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider">類別</th>
-                                <th class="px-6 py-3 border-b-2 border-gray-300 text-left text-sm leading-4 text-blue-500 tracking-wider">加入日期</th>                                
-                            </tr>
-                        </thead>
-                        <tbody class="bg-white">
-                                <tr v-for="(item, index) in foods">
-                                    <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-500">{{ item.name }}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-500">{{ item.name }}
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-no-wrap border-b text-blue-900 border-gray-500 text-sm leading-5"> {{ item.category }} </td>
-                                    <td class="px-6 py-4 whitespace-no-wrap border-b border-gray-500 text-blue-900 text-sm leading-5"> {{ item.buyDate}} </td>
-                          </tr>
-                               
-                        </tbody>
-                    </table>
-                  <div class="sm:flex-1 sm:flex sm:items-center sm:justify-between mt-4 work-sans">
-        <div>
-            <p class="text-sm leading-5 text-blue-700">
-                Showing
-                <span class="font-medium">1</span>
-                to
-                <span class="font-medium">200</span>
-                of
-                <span class="font-medium">2000</span>
-                results
-            </p>
-        </div>
+<body id="app" style="padding-top: 0; padding-left: 0; padding-right: 0;">
+
+<!-- 橫式選單 -->
+<header class="header" role="banner">
+    <div class="d-lg-flex half"><a href="/" class="home-btn" style="text-decoration: none;">
+        <div class="bg order-1 order-md-2" style="background-image: url('images/bg_1.jpg');"></div>
+        <div class="contents order-2 order-md-1">
+            <div class="container">
+                <div class="row align-items-center justify-content-center">
+                    <div class="col-md-7" style="margin-left: 240px;">
+                        <h3><strong>Squirrel Factory</strong></h3>
+                        <h3><strong>松鼠儲藏室</strong></h3>
+                        <p class="mb-4" style="font-size: smaller; color: gray">協助您管理家裡食物庫存的小幫手</p>
+                    </div></div></div></div>
+    </a></div>
+    <div class="bannercontainer">
+        <nav><ul>
+            <li><a href="/">登入畫面</a></li>
+            <li><a href="/foods.html">食物庫存</a></li>
+            <li><a href="/fooddetaillist.html">營養資訊</a></li>
+            <li class="active"><a href="tobuy.htmls">採購清單</a></li>
+        </ul></nav>
+    </div>
+</header>
+
+<!-- 搜尋列start -->
+<form style="margin-left: 300px; margin-top: 20px;" v-on:submit.prevent="onSearch" autocomplete="off">
+    <label for="search">Search </label>
+    <input id="search" type="search" v-model="keyword">
+    <span class="caret"></span>
+</form>
+<!-- 搜尋列end -->
+
+<!-- 新增按鈕 -->
+<div class="container">
+    <el-button type="warning" class="btn" @click="showAddFoodTobuyModal = true">新增</el-button>
+    <!-- 表格start -->
+    <table>
+        <thead>
+        <tr>
+            <th>編號</th>
+            <th>名稱</th>
+            <th style="display: flex; height: 60px; align-items: center; justify-content: center;"
+                @click="onChangeTobuyDateMode">
+                採購日
+                <div :class="[tobuyDateArrowMode === 0 ? '' : 'arrow-down']">⯅</div>
+            </th>
+            <th>變更</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="(item, index) in foods">
+            <td>{{ item.tobuyId }}</td>
+            <td>{{ item.name }}</td>
+            <td>
+                <div v-if="!showEditMode[index]">{{ item.tobuyDate }}</div>
+                <el-date-picker v-else v-model="foods[index].tobuyDate" type="date=" placeholder="Pick a day"
+                                :size="size"/>
+            </td>
+            <td>
+          <span v-if="!showEditMode[index]" class="material-symbols-outlined" @click="showEditMode[index] = true">
+            edit_note
+          </span>
+                <span @click="onDelete(item.tobuyId)" v-if="!showEditMode[index]" class="material-symbols-outlined">
+            delete
+          </span>
+                <span v-if="showEditMode[index]" class="material-symbols-outlined" @click="onUpdate(index)">
+            確定
+          </span>
+                <span v-if="showEditMode[index]" class="material-symbols-outlined" @click="showEditMode[index] = false">
+            取消
+          </span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
 
 <!-- @size-change事件: 重新打API要資料，把目前頁數設定回第一頁-->
-     <el-pagination background layout="prev, pager, next, sizes"
-                    :total="total"
-                    :page-sizes="[12, 24, 50, 100]"
-                    style="justify-content: center;"
-                    @size-change="onSizeChange"
-                    @current-change="onCurrentChange"
-                    @prev-click="onPrevClick"
-                    @next-click="onNextClick"
-                    v-model:current-page="currentPage"
-                    v-model:page-size="pageSize" />
+<el-pagination background layout="prev, pager, next, sizes"
+               :total="total"
+               :page-sizes="[12, 24, 50, 100]"
+               style="justify-content: center;"
+               @size-change="onSizeChange"
+               @current-change="onCurrentChange"
+               @prev-click="onPrevClick"
+               @next-click="onNextClick"
+               v-model:current-page="currentPage"
+               v-model:page-size="pageSize" />
 <!-- @size-change事件-->
-        
 
 </body>
 
-   
+
 <script>
     // Vue初始化
     const { createApp } = Vue
-  
+
     createApp({
-      data() {
-        // 網頁要使用的變數放這裡
-        return {
-          message: 'Hello Vue!',
-          foods: [],
-          foodDetail: {},
-          showFoodDetail: false,
-          showAddFoodModal: false,
-          // nameoptions:[],
-          // loading: false,
-          // showResult: false,
-          
-          //分頁使用的變數
-          currentPage: 1,  // 目前在哪一頁
-          pageSize: 12,
-          total: 0,
-          caloriesArrowMode: 0, // 0=不排序, 1=由大到小, 2=由小到大
-  
-         // 使用者的選擇種類會存在這邊
-         //categoryValue: '種類',
-          options: [
-            {
-              value: '水果類',
-              label: '水果類',
-            },
-            {
-              value: '蔬菜類',
-              label: '蔬菜類',
-            },
-            {
-              value: '豆類',
-              label: '豆類',
-            },
-            {
-              value: '菇類',
-              label: '菇類',
-            },
-            {
-              value: '堅果及種子類',
-              label: '堅果及種子類',
-            },
-            {
-              value: '穀物類',
-              label: '穀物類',
-            },
-            {
-              value: '油脂類',
-              label: '油脂類',
-            },
-            {
-              value: '藻類',
-              label: '藻類',
-            },
-            {
-              value: '乳品類',
-              label: '乳品類',
-            },
-            {
-              value: '蛋類',
-              label: '蛋類',
-            },
-            {
-              value: '肉類',
-              label: '肉類',
-            },
-            {
-              value: '魚貝類',
-              label: '魚貝類',
-            },
-            {
-              value: '加工調理食品及其他類',
-              label: '加工調理食品及其他類',
-            },
-            {
-              value: '飲料類',
-              label: '飲料類',
-            },
-            {
-              value: '澱粉類',
-              label: '澱粉類',
-            },
-            {
-              value: '糖類',
-              label: '糖類',
-            },
-            {
-              value: '糕餅點心類',
-              label: '糕餅點心類',
-            },
-            {
-              value: '調味料及香辛料類',
-              label: '調味料及香辛料類',
-            },
-          ],
-  
-          newFoodData: {
-            name: '',
-            category: '',
-            buyDate: null,
-            expDate: null,
-            quantity: 0,
-          },
-  
-              // 編輯模式下顯示數量欄位用
-                  showEditMode: [],
-          deleteDataIndex: {
-            stockId :'',
-          },
-  
-        }
-      },
-      // 當網頁載入完成後會被Vue框架呼叫
-      mounted() {
-        this.onGet();
-      },
-      // 網頁要用的方法寫在這裡
-      methods: {
-        onGet() {
-          // 打API
-          axios.get("/foods")
-            .then((response) => {
-              // get完成後收到的資料可以在這裡處理
-              console.log(response);
-              // 將API的商品資料存到Vue建立的products變數
-              if (response.data.code == 0) {
-                // 將API拿到的data存到Vue變數
-                this.foods = response.data.data;
-              }
-            })
-            .catch((error) => {
-              console.log(error);
-            });
+        data() {
+            // 網頁要使用的變數放這裡
+            return {
+                message: 'Hello Vue!',
+                foods: [],
+                foodDetail: {},
+                showFoodDetail: false,
+                showAddFoodTobuyModal: false,
+                // nameoptions:[],
+                // loading: false,
+                // showResult: false,
+
+                //分頁使用的變數
+                currentPage: 1,  // 目前在哪一頁
+                pageSize: 12,
+                total: 0,
+                tobuyDateArrowMode: 0, // 0=不排序, 1=由大到小, 2=由小到大
+
+                // 使用者的選擇種類會存在這邊
+                //categoryValue: '種類',
+                options: [
+                    {
+                        value: '水果類',
+                        label: '水果類',
+                    },
+                    {
+                        value: '蔬菜類',
+                        label: '蔬菜類',
+                    },
+                    {
+                        value: '豆類',
+                        label: '豆類',
+                    },
+                    {
+                        value: '菇類',
+                        label: '菇類',
+                    },
+                    {
+                        value: '堅果及種子類',
+                        label: '堅果及種子類',
+                    },
+                    {
+                        value: '穀物類',
+                        label: '穀物類',
+                    },
+                    {
+                        value: '油脂類',
+                        label: '油脂類',
+                    },
+                    {
+                        value: '藻類',
+                        label: '藻類',
+                    },
+                    {
+                        value: '乳品類',
+                        label: '乳品類',
+                    },
+                    {
+                        value: '蛋類',
+                        label: '蛋類',
+                    },
+                    {
+                        value: '肉類',
+                        label: '肉類',
+                    },
+                    {
+                        value: '魚貝類',
+                        label: '魚貝類',
+                    },
+                    {
+                        value: '加工調理食品及其他類',
+                        label: '加工調理食品及其他類',
+                    },
+                    {
+                        value: '飲料類',
+                        label: '飲料類',
+                    },
+                    {
+                        value: '澱粉類',
+                        label: '澱粉類',
+                    },
+                    {
+                        value: '糖類',
+                        label: '糖類',
+                    },
+                    {
+                        value: '糕餅點心類',
+                        label: '糕餅點心類',
+                    },
+                    {
+                        value: '調味料及香辛料類',
+                        label: '調味料及香辛料類',
+                    },
+                ],
+
+                newFoodTobuyData: {
+                    name: '',
+                    tobuyDate: null,
+                },
+
+                // 編輯模式下顯示數量欄位用
+                showEditMode: [],
+                deleteDataIndex: {
+                    tobuyId :'',
+                },
+
+            }
         },
-        // 新增資料
-        onAdd() {
-          // 將新增資料的對話盒顯示出來
-          console.log(JSON.stringify(this.newFoodData));
-  
-          // 打API將資料送到後端
-          axios.post('/food', this.newFoodData)
-            .then((response) => {
-              console.log(response);
-              if (response.data.code == 0) {
-                this.$message.success('新增成功');
-                this.showAddFoodModal = false;
+        // 當網頁載入完成後會被Vue框架呼叫
+        mounted() {
+            this.onGet();
+            this.onSearch();
+        },
+        // 網頁要用的方法寫在這裡
+        methods: {
+            onGet() {
+                // 打API
+                axios.get('/tobuy?page=' + this.currentPage + '&count=' + this.pageSize + "&tobuyDateSortMode=" + this.tobuyDateArrowMode)
+                    .then((response) => {
+                        // get完成後收到的資料可以在這裡處理
+                        console.log(response);
+                        // 將API的商品資料存到Vue建立的products變數
+                        if (response.data.code == 0) {
+                            // 將API拿到的data存到Vue變數
+                            this.total = response.data.data.total;
+                            this.foods = response.data.data.foods;
+                        }else if(response.data.code == 9) { // 未登入
+                            location.href = "/index.html";
+                        }
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                    });
+            },
+            // 新增資料
+            onAdd() {
+                // 將新增資料的對話盒顯示出來
+                console.log(JSON.stringify(this.newFoodTobuyData));
+
+                // 打API將資料送到後端
+                axios.post('/addtobuy', this.newFoodTobuyData)
+                    .then((response) => {
+                        console.log(response);
+                        if (response.data.code == 0) {
+                            this.$message.success('新增成功');
+                            this.showAddFoodTobuyModal = false;
+                            this.onGet();
+                            //this.showEditMode[index] = false;
+
+                        }
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                        // 新增失敗
+
+                        this.$message.error('新增失敗');
+                    });
+
+            },
+            onUpdate(index) {
+                // 將新增資料的對話盒顯示出來
+                console.log(JSON.stringify(this.foods[index]));
+
+                // 打API將資料送到後端
+                axios.put('/updatetobuy', this.foods[index])
+                    .then((response) => {
+                        console.log(response);
+                        if (response.data.code == 0) {
+                            this.$message.success('更新成功');
+                            this.showEditMode[index] = false;
+                            this.onGet();
+                        }
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                        // 新增失敗
+
+                        this.$message.error('更新失敗');
+                    });
+            },
+            onDelete(tobuyId) {
+                this.deleteDataIndex.tobuyId = tobuyId;
+                console.log(JSON.stringify(this.deleteDataIndex));
+                //打API將資料送到後端
+                axios.delete('/deltobuy', {data: this.deleteDataIndex }, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }})
+                    .then((response) => {
+                        console.log(response);
+                        if (response.data.code == 0) {
+                            this.$message.success('刪除成功');
+                            this.onGet()
+                        }
+                    })
+                    .catch((error) => {
+                        console.log(error);
+
+                        this.$message.error('刪除失敗');
+                    })
+            },
+
+            onSizeChange(size) {
+                this.currentPage = 1;
+
+                if (this.keyword.length > 0) {
+                    this.onSearch();
+                } else
+                    this.onGet();
+            },
+            onCurrentChange() {
+                if (this.keyword.length > 0) {
+                    this.onSearch();
+                } else
+                    this.onGet();
+            },
+            // 分頁被點擊了上一頁
+            onPrevClick(page) {
+
+            },
+            // 分頁被點擊了下一頁
+            onNextClick(page) {
+
+            },
+            // 改變編號排序模式
+            onChangeTobuyDateMode() {
+                this.currentPage = 1;
+
+                if (this.tobuyDatArrowMode === 0) {
+                    this.tobuyDatArrowMode = 1; // 改為降序排序
+                } else {
+                    this.tobuyDatArrowMode = 0; // 改為升序排序
+                }
+
+                // 重新打API排序
                 this.onGet();
-                //this.showEditMode[index] = false;
-              
-              }
-            })
-            .catch((error) => {
-              console.log(error);
-              // 新增失敗
-  
-              this.$message.error('新增失敗');
-            });
-  
-        },
-        // 蔬果名稱被點擊時呼叫的方法
-        onShowFoodDetail(food_id) {
-          // 顯示食品詳細資訊的對話盒
-          this.showFoodDetail = true;
-          // alert('id=' + food_id + '被點擊了');
-  
-          axios.get("/foodDetail?id=" + food_id)
-            .then((response) => {
-              // get完成後收到的資料可以在這裡處理
-              console.log(response);
-              // 將API的商品資料存到Vue建立的products變數
-              if (response.data.code == 0) {
-                // 將API拿到的data存到Vue變數
-                this.foodDetail = response.data.data;
-              }
-            })
-            .catch((error) => {
-              console.log(error);
-            });
-        },
-        onUpdate(index) {
-                  // 將新增資料的對話盒顯示出來
-                  console.log(JSON.stringify(this.foods[index]));
-  
-                  // 打API將資料送到後端
-                  axios.put('/food', this.foods[index])
-                      .then((response) => {
-                          console.log(response);
-                          if (response.data.code == 0) {
-                              this.$message.success('更新成功');
-                              this.showEditMode[index] = false;
-                              this.onGet();
-                          }
-                      })
-                      .catch((error) => {
-                          console.log(error);
-                          // 新增失敗
-                          
-                          this.$message.error('更新失敗');
-                      });
-              },
-        onDelete(stockId) {
-                  this.deleteDataIndex.stockId = stockId;
-                  console.log(JSON.stringify(this.deleteDataIndex));
-                  //打API將資料送到後端
-                  axios.delete('/delfood', {data: this.deleteDataIndex }, {
-                      headers: {
-                          'Content-Type': 'application/json',
-                      }})
-                      .then((response) => {
-                          console.log(response);
-                          if (response.data.code == 0) {
-                              this.$message.success('刪除成功');
-                              this.onGet()
-                          }
-                      })
-                      .catch((error) => {
-                          console.log(error);
-  
-                          this.$message.error('刪除失敗');
-                      })     
-              }
 
-      }
+            }
+        }
     }).use(ElementPlus).mount('#app')
-  </script>
-  
+</script>
 
 
-
-  
- </html>
+</html>

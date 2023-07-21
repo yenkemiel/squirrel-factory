@@ -54,19 +54,18 @@
          <li><a href="/">登入畫面</a></li>
          <li><a href="/foods.html">食物庫存</a></li>
          <li class="active"><a href="/fooddetaillist.html">營養資訊</a></li>
-         <li><a href="#">採購清單</a></li>
+         <li><a href="/tobuy.html">採購清單</a></li>
        </ul></nav>
    </div>
  </header>
 
   <!-- 搜尋列start -->
   <form style="margin-left: 300px; margin-top: 20px;" v-on:submit.prevent="onSearch" autocomplete="off">
-    <label for="search">Search</label>
+    <label for="search">Search </label>
     <input id="search" type="search" v-model="keyword">
     <span class="caret"></span>
   </form>
   <!-- 搜尋列end -->
-
 
     <!-- 新增按鈕 -->
 <div class="container">
@@ -97,10 +96,7 @@
       <thead>
       <tbody>
         <tr v-for="(item, index) in foods">
-          <td>
-            <div v-if="!showEditMode[index]">{{ item.foodId }}</div>
-            <el-input-number v-else v-model="foods[index].foodId" @change="handleChange" />
-          </td>
+          <td>{{ item.foodId }}</td>
           <td>{{ item.name }}</td>
           <td>{{ item.categoryNo }}</td>
           <td>{{ item.category }}</td>
