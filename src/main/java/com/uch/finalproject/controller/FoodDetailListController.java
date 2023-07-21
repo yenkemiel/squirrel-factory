@@ -1,8 +1,6 @@
 package com.uch.finalproject.controller;
 
-import com.uch.finalproject.model.BaseResponse;
-import com.uch.finalproject.model.FoodDetailEntity;
-import com.uch.finalproject.model.FoodDetailListPageResponse;
+import com.uch.finalproject.model.*;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -132,6 +130,64 @@ public class FoodDetailListController {
             return new FoodDetailListPageResponse(4,"資料刪除失敗",null, 0);
         }
     }
+
+    /* 搜尋食物營養資料 */
+    @RequestMapping(value = "/searchfoodDetail", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public FoodDetailListPageResponse searchFoodDetail(@RequestParam("name") String keyword, int page, int count, int foodIdSortMode) {
+        return search("fd.name", keyword, "", page, count, foodIdSortMode);
+    }
+
+    private FoodDetailListPageResponse search(String columnName, String keyword, String keyvalue, int page, int count, int foodIdSortMode) {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+
+            conn = DriverManager.getConnection("jdbc:mysql://localhost/foods?user=root&password=0000");
+
+            String sortDirection = (foodIdSortMode == 1) ? "DESC" : "ASC";
+            String queryString = "SELECT fd.food_id, name, fd.category_no, category, calories, protein, saturated_fat, total_carbohydrates, dietary_fiber " +
+                    "FROM food_detail fd JOIN category c ON c.category_no = fd.category_no " +
+                    "WHERE " + columnName + " LIKE '%" + keyword + "%'" +
+                    " ORDER BY food_id " + sortDirection +
+                    " LIMIT " + count + " OFFSET " + ((page - 1) * count);
+
+            // 字串搜尋
+            stmt = conn.prepareStatement(queryString);
+            rs = stmt.executeQuery(queryString);
+
+
+            ArrayList<FoodDetailEntity> foods = new ArrayList<>();
+            while(rs.next()) {
+                FoodDetailEntity foodDetailEntity = new FoodDetailEntity();
+                foodDetailEntity.setFoodId(rs.getInt("food_id"));
+                foodDetailEntity.setName(rs.getString("name"));
+                foodDetailEntity.setCategoryNo(rs.getInt("category_no"));
+                foodDetailEntity.setCategory(rs.getString("category"));
+                foodDetailEntity.setCalories(rs.getInt("calories"));
+                foodDetailEntity.setProtein(rs.getFloat("protein"));
+                foodDetailEntity.setSaturatedFat(rs.getFloat("saturated_fat"));
+                foodDetailEntity.setDietaryFiber(rs.getFloat("dietary_fiber"));
+                foodDetailEntity.setTotalCarbohydrates(rs.getFloat("total_carbohydrates"));
+
+                foods.add(foodDetailEntity);
+            }
+
+            // 取得全部數量
+            rs = stmt.executeQuery("SELECT count(*) as c FROM food_stock f JOIN food_detail fd ON f.food_id = fd.food_id JOIN category c ON fd.category_no = c.category_no " +
+                    "WHERE " + columnName + " LIKE '%" + keyword + "%'");
+            rs.next();
+            int total = rs.getInt("c");
+
+            return new FoodDetailListPageResponse(0, "資料搜尋成功", foods, total);
+        } catch(SQLException e) {
+            return new FoodDetailListPageResponse(e.getErrorCode(), "資料搜尋失敗", null, 0);
+        } catch(ClassNotFoundException e) {
+            return new FoodDetailListPageResponse(1, "無法註冊驅動程式", null, 0);
+        }
+    }
+
     /* 下載CSV資料 */
     @RequestMapping(value = "/foodDetails/{uid}/csv")
     public void exportCsv(HttpServletResponse response, @PathVariable String uid) throws IOException, ServletException {
@@ -139,7 +195,7 @@ public class FoodDetailListController {
         response.setCharacterEncoding("UTF-8");
         PrintWriter writer = response.getWriter();
 
-        // 獲取參數，例如 page、count 和 expdateSortMode
+        // 獲取參數，例如 page、count 和 foodIdSortMode
         int page = 1; // 適當設置默認值
         int count = 10; // 適當設置默認值
         int foodIdSortMode = 0; // 適當設置默認值

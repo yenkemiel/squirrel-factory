@@ -179,9 +179,9 @@ public class FoodController {
             rs.next();
             int total = rs.getInt("c");
 
-            return new FoodPageResponse(0, "搜尋成功", foods, total);
+            return new FoodPageResponse(0, "資料搜尋成功", foods, total);
         } catch (ClassNotFoundException e) {
-            return new FoodPageResponse(1, "找不到驅動程式", null, 0);
+            return new FoodPageResponse(1, "資料搜尋失敗", null, 0);
         } catch (SQLException e) {
             return new FoodPageResponse(e.getErrorCode(), e.getMessage(), null, 0);
         }

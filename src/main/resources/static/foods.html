@@ -65,33 +65,19 @@
 </header>
 
 
-<!-- 搜尋 -->
-<form v-on:submit.prevent="onSearch" autocomplete="off">
+<!--&lt;!&ndash; 搜尋 &ndash;&gt;-->
+<!--<form v-on:submit.prevent="onSearch" autocomplete="off">-->
+<!--    <label for="search">Search</label>-->
+<!--    <input id="search" type="search" v-model="keyword">-->
+<!--    <span class="caret"></span>-->
+<!--</form>-->
+<!-- 搜尋列start -->
+<form style="margin-left: 300px; margin-top: 20px;" v-on:submit.prevent="onSearch" autocomplete="off">
     <label for="search">Search</label>
     <input id="search" type="search" v-model="keyword">
     <span class="caret"></span>
-
 </form>
-<!--  &lt;!&ndash; 搜尋列start &ndash;&gt;-->
-<!--   <div class="align-middle m-4 remote-option" >-->
-<!--    <h2>搜尋</h2>-->
-<!--    <el-select v-model="value" filterable remote reserve-value placeholder="Please enter a value" remote-show-suffix-->
-<!--        :remote-method="remoteMethod" :loading="loading">-->
-<!--        <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value" />-->
-<!--    </el-select>-->
-<!--    <el-button type="warning" @click="showResult = true">送出</el-button>-->
-<!--      <el-dialog v-model="showResult" title="結果" width="30%" :before-close="handleClose">-->
-<!--        <span>{{value}}</span>-->
-<!--        <template #footer>-->
-<!--            <span class="dialog-footer">-->
-<!--                <el-button type="primary" @click="showResult = false">-->
-<!--                    關閉-->
-<!--                </el-button>-->
-<!--            </span>-->
-<!--        </template>-->
-<!--    </el-dialog>-->
-<!--  </div>-->
-<!--&lt;!&ndash; 搜尋列end &ndash;&gt;-->
+<!-- 搜尋列end -->
 
 <!-- 新增按鈕 -->
 <div class="container">

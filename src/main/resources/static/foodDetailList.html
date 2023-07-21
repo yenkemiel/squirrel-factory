@@ -58,6 +58,15 @@
    </div>
  </header>
 
+  <!-- 搜尋列start -->
+  <form style="margin-left: 300px; margin-top: 20px;" v-on:submit.prevent="onSearch" autocomplete="off">
+    <label for="search">Search</label>
+    <input id="search" type="search" v-model="keyword">
+    <span class="caret"></span>
+  </form>
+  <!-- 搜尋列end -->
+
+
     <!-- 新增按鈕 -->
 <div class="container">
   <el-button type="warning" class="btn" @click="showAddFoodDetailModal = true">新增</el-button>
@@ -204,8 +213,8 @@
       v-model:current-page="currentPage" 
       v-model:page-size="pageSize"/>
   </el-pagination>
-
-    </body>
+</div>
+</body>
 
 <script>
 
@@ -224,6 +233,8 @@
         pageSize: 12,
         total: 0,
         foodIdArrowMode: 0, // 0=升序, 1=降序
+
+        keyword: '',
 
 
       // 使用者的選擇種類會存在這邊
@@ -331,6 +342,7 @@
     // 當網頁載入完成後會被Vue框架呼叫
     mounted() {
       this.onGet();
+      this.onSearch();
     },
     // 網頁要用的方法寫在這裡
     methods: {
@@ -424,13 +436,47 @@
                 })
       },
 
+      // 搜尋資料
+      onSearch() {
+        // 打API要搜尋資料
+        // 打API
+        axios.get('/searchfoodDetail', {
+          params: {
+            name: this.keyword,
+            page: this.currentPage,
+            count: this.pageSize,
+            foodIdSortMode: this.foodIdArrowMode
+          }
+        })
+                .then((response) => {
+                  // get完成後收到的資料可以在這裡處理
+                  console.log(response);
+                  // 將API的商品資料存到Vue建立的products變數
+                  if (response.data.code == 0) {
+                    // 將API拿到的data存到Vue變數
+                    this.total = response.data.data.total;
+                    this.foods = response.data.data.foods;
+                  }
+                })
+                .catch((error) => {
+                  console.log(error);
+                });
+      },
+
 
       onSizeChange(size) {
         this.currentPage = 1;
-        this.onGet();
+
+        if (this.keyword.length > 0) {
+          this.onSearch();
+        } else
+          this.onGet();
       },
       onCurrentChange() {
-        this.onGet();
+        if (this.keyword.length > 0) {
+          this.onSearch();
+        } else
+          this.onGet();
       },
       // 分頁被點擊了上一頁
       onPrevClick(page) {
