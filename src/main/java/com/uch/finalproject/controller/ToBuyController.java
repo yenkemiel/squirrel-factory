@@ -120,62 +120,55 @@ public class ToBuyController {
         }
     }
 
-//    /* 搜尋採購食物資料 */
-//    @RequestMapping(value = "/searchfoodDetail", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-//    public ToBuyPageResponse searchFoodDetail(@RequestParam("name") String keyword, int page, int count, int tobuyDateSortMode) {
-//        return search("fd.name", keyword, "", page, count, tobuyDateSortMode);
-//    }
-//
-//    private ToBuyPageResponse search(String columnName, String keyword, String keyvalue, int page, int count, int tobuyDateSortMode) {
-//        Connection conn = null;
-//        PreparedStatement stmt = null;
-//        ResultSet rs = null;
-//        try {
-//            Class.forName("com.mysql.cj.jdbc.Driver");
-//
-//            conn = DriverManager.getConnection("jdbc:mysql://localhost/foods?user=root&password=0000");
-//
-//            String sortDirection = (tobuyDateSortMode == 1) ? "DESC" : "ASC";
-//            String queryString = "SELECT fd.food_id, name, fd.category_no, category, calories, protein, saturated_fat, total_carbohydrates, dietary_fiber " +
-//                    "FROM food_detail fd JOIN category c ON c.category_no = fd.category_no " +
-//                    "WHERE " + columnName + " LIKE '%" + keyword + "%'" +
-//                    " ORDER BY food_id " + sortDirection +
-//                    " LIMIT " + count + " OFFSET " + ((page - 1) * count);
-//
-//            // 字串搜尋
-//            stmt = conn.prepareStatement(queryString);
-//            rs = stmt.executeQuery(queryString);
-//
-//
-//            ArrayList<ToBuyEntity> foods = new ArrayList<>();
-//            while(rs.next()) {
-//                ToBuyEntity toBuyEntity = new ToBuyEntity();
-//                toBuyEntity.setFoodId(rs.getInt("food_id"));
-//                toBuyEntity.setName(rs.getString("name"));
-//                toBuyEntity.setCategoryNo(rs.getInt("category_no"));
-//                toBuyEntity.setCategory(rs.getString("category"));
-//                toBuyEntity.setCalories(rs.getInt("calories"));
-//                toBuyEntity.setProtein(rs.getFloat("protein"));
-//                toBuyEntity.setSaturatedFat(rs.getFloat("saturated_fat"));
-//                toBuyEntity.setDietaryFiber(rs.getFloat("dietary_fiber"));
-//                toBuyEntity.setTotalCarbohydrates(rs.getFloat("total_carbohydrates"));
-//
-//                foods.add(toBuyEntity);
-//            }
-//
-//            // 取得全部數量
-//            rs = stmt.executeQuery("SELECT count(*) as c FROM food_stock f JOIN food_detail fd ON f.food_id = fd.food_id JOIN category c ON fd.category_no = c.category_no " +
-//                    "WHERE " + columnName + " LIKE '%" + keyword + "%'");
-//            rs.next();
-//            int total = rs.getInt("c");
-//
-//            return new ToBuyPageResponse(0, "資料搜尋成功", foods, total);
-//        } catch(SQLException e) {
-//            return new ToBuyPageResponse(e.getErrorCode(), e.getMessage(), null, 0);
-//        } catch(ClassNotFoundException e) {
-//            return new ToBuyPageResponse(5, "資料搜尋成功", null, 0);
-//        }
-//    }
+    /* 搜尋採購食物資料 */
+    @RequestMapping(value = "/searchtobuy", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ToBuyPageResponse searchTouBuy(@RequestParam("name") String keyword, int page, int count, int tobuyDateSortMode) {
+        return search("fd.name", keyword, "", page, count, tobuyDateSortMode);
+    }
+
+    private ToBuyPageResponse search(String columnName, String keyword, String keyvalue, int page, int count, int tobuyDateSortMode) {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+
+            conn = DriverManager.getConnection("jdbc:mysql://localhost/foods?user=root&password=0000");
+
+            String sortDirection = (tobuyDateSortMode == 1) ? "DESC" : "ASC";
+            String queryString = "SELECT ft.tobuy_id, name, tobuy_date FROM food_tobuy ft JOIN food_detail fd ON ft.food_id = fd.food_id JOIN category c ON fd.category_no = c.category_no " +
+                    "WHERE " + columnName + " LIKE '%" + keyword + "%'" +
+                    " ORDER BY tobuy_date " + sortDirection +
+                    " LIMIT " + count + " OFFSET " + ((page - 1) * count);
+
+            // 字串搜尋
+            stmt = conn.prepareStatement(queryString);
+            rs = stmt.executeQuery(queryString);
+
+
+            ArrayList<ToBuyEntity> foods = new ArrayList<>();
+            while(rs.next()) {
+                ToBuyEntity toBuyEntity = new ToBuyEntity();
+                toBuyEntity.setTobuyId(rs.getInt("tobuy_id"));
+                toBuyEntity.setName(rs.getString("name"));
+                toBuyEntity.setTobuyDate(rs.getDate("tobuy_date"));
+
+                foods.add(toBuyEntity);
+            }
+
+            // 取得全部數量
+            rs = stmt.executeQuery("SELECT count(*) as c FROM food_tobuy ft JOIN food_detail fd ON ft.food_id = fd.food_id JOIN category c ON fd.category_no = c.category_no " +
+                    "WHERE " + columnName + " LIKE '%" + keyword + "%'");
+            rs.next();
+            int total = rs.getInt("c");
+
+            return new ToBuyPageResponse(0, "資料搜尋成功", foods, total);
+        } catch(SQLException e) {
+            return new ToBuyPageResponse(e.getErrorCode(), e.getMessage(), null, 0);
+        } catch(ClassNotFoundException e) {
+            return new ToBuyPageResponse(5, "資料搜尋成功", null, 0);
+        }
+    }
 //
 //    /* 下載CSV資料 */
 //    @RequestMapping(value = "/foodDetails/{uid}/csv")
@@ -264,13 +257,11 @@ public class ToBuyController {
 
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
-
             conn = DriverManager.getConnection("jdbc:mysql://localhost/foods?user=root&password=0000");
-
             stmt = conn.createStatement();
 
             String sortDirection = (tobuyDateSortMode == 1) ? "DESC" : "ASC";
-            rs = stmt.executeQuery("select tobuy_id, name, tobuy_date from food_tobuy f join food_detail fd on f.food_id = fd.food_id join category c on fd.category_no = c.category_no "+
+            rs = stmt.executeQuery("select tobuy_id, name, tobuy_date from food_tobuy ft join food_detail fd on ft.food_id = fd.food_id join category c on fd.category_no = c.category_no "+
                     "ORDER BY tobuy_date " + sortDirection  +
                     " limit " + count + " offset " + ((page-1) * count));
 
@@ -287,7 +278,7 @@ public class ToBuyController {
             }
 
             // 取得全部數量
-            rs = stmt.executeQuery("SELECT count(*) as c FROM food_tobuy f JOIN food_detail fd ON f.food_id = fd.food_id JOIN category c ON fd.category_no = c.category_no ");
+            rs = stmt.executeQuery("SELECT count(*) as c FROM food_tobuy ft JOIN food_detail fd ON ft.food_id = fd.food_id JOIN category c ON fd.category_no = c.category_no ");
             rs.next();
             int total = rs.getInt("c");
 
