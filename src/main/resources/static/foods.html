@@ -422,7 +422,7 @@
                 console.log(JSON.stringify(this.newFoodData));
 
                 // 打API將資料送到後端
-                axios.post('/food', this.newFoodData)
+                axios.post('/addfood', this.newFoodData)
                     .then((response) => {
                         console.log(response);
                         if (response.data.code == 0) {

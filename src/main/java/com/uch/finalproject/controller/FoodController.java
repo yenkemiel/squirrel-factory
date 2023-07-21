@@ -30,10 +30,10 @@ public class FoodController {
     }
 
     /* 新增食物資料 */
-    @RequestMapping(value = "/food", method = RequestMethod.POST,
+    @RequestMapping(value = "/addfood", method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE,  // 傳入的資料格式
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public BaseResponse addFood(@RequestBody FoodEntity data) {
+    public FoodPageResponse addFood(@RequestBody FoodEntity data) {
         Connection conn = null;
         PreparedStatement stmt = null;
 
@@ -72,12 +72,12 @@ public class FoodController {
 
             stmt.executeUpdate();
 
-            return new BaseResponse(0, "資料新增成功");
+            return new FoodPageResponse(0, "資料新增成功",null,0);
 
         }catch(SQLException e) {
-            return new BaseResponse(e.getErrorCode(), e.getMessage());
+            return new FoodPageResponse(e.getErrorCode(), e.getMessage(),null,0);
         }catch(ClassNotFoundException e) {
-            return new BaseResponse(2,"資料新增失敗");
+            return new FoodPageResponse(2,"資料新增失敗",null,0);
         }
     }
 
@@ -85,7 +85,7 @@ public class FoodController {
     @RequestMapping(value = "/food", method = RequestMethod.PUT,
             consumes = MediaType.APPLICATION_JSON_VALUE,  // 傳入的資料格式
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public BaseResponse updateFood(@RequestBody FoodEntity data) {
+    public FoodPageResponse updateFood(@RequestBody FoodEntity data) {
         Connection conn = null;
         PreparedStatement stmt = null;
 
@@ -104,12 +104,12 @@ public class FoodController {
             stmt.executeUpdate();
 
 
-            return new BaseResponse(0, "資料更新成功");
+            return new FoodPageResponse(0, "資料更新成功",null,0);
 
         }catch(SQLException e) {
-            return new BaseResponse(e.getErrorCode(), e.getMessage());
+            return new FoodPageResponse(e.getErrorCode(), e.getMessage(),null,0);
         }catch(ClassNotFoundException e) {
-            return new BaseResponse(3,"資料更新失敗");
+            return new FoodPageResponse(3,"資料更新失敗",null,0);
         }
     }
 
@@ -117,7 +117,7 @@ public class FoodController {
     @RequestMapping(value = "/delfood", method = RequestMethod.DELETE,
             consumes = MediaType.APPLICATION_JSON_VALUE,  // 傳入的資料格式
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public BaseResponse deleteFood(@RequestBody FoodEntity data) {
+    public FoodPageResponse deleteFood(@RequestBody FoodEntity data) {
         Connection conn = null;
         PreparedStatement stmt = null;
 
@@ -130,12 +130,12 @@ public class FoodController {
 
             stmt.executeUpdate();
 
-            return new BaseResponse(0, "資料刪除成功");
+            return new FoodPageResponse(0, "資料刪除成功",null,0);
 
         }catch(SQLException e) {
-            return new BaseResponse(e.getErrorCode(), e.getMessage());
+            return new FoodPageResponse(e.getErrorCode(), e.getMessage(),null,0);
         }catch(ClassNotFoundException e) {
-            return new BaseResponse(4,"資料刪除失敗");
+            return new FoodPageResponse(4,"資料刪除失敗",null,0);
         }
     }
 
