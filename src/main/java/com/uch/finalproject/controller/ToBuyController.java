@@ -122,7 +122,7 @@ public class ToBuyController {
 
     /* 搜尋採購食物資料 */
     @RequestMapping(value = "/searchtobuy", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ToBuyPageResponse searchTouBuy(@RequestParam("name") String keyword, int page, int count, int tobuyDateSortMode) {
+    public ToBuyPageResponse searchToBuy(@RequestParam("name") String keyword, int page, int count, int tobuyDateSortMode) {
         return search("fd.name", keyword, "", page, count, tobuyDateSortMode);
     }
 
