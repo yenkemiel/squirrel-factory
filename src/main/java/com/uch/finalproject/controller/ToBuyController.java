@@ -169,30 +169,30 @@ public class ToBuyController {
             return new ToBuyPageResponse(5, "資料搜尋成功", null, 0);
         }
     }
-//
-//    /* 下載CSV資料 */
-//    @RequestMapping(value = "/foodDetails/{uid}/csv")
-//    public void exportCsv(HttpServletResponse response, @PathVariable String uid) throws IOException, ServletException {
-//        response.setContentType("text/csv");
-//        response.setCharacterEncoding("UTF-8");
-//        PrintWriter writer = response.getWriter();
-//
-//        // 獲取參數，例如 page、count 和 tobuyDateSortMode
-//        int page = 1; // 適當設置默認值
-//        int count = 10; // 適當設置默認值
-//        int tobuyDateSortMode = 0; // 適當設置默認值
-//
-//        ToBuyPageResponse foods = getFoodList(page, count, tobuyDateSortMode);
-//        try (CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT)) {
-//            csvPrinter.printRecord("編號","名稱", "類別編號", "類別", "熱量(大卡)", "蛋白質(公克)", "飽和脂肪(公克)", "總碳水化合物(公克)", "膳食纖維(公克)");
-//            for (ToBuyEntity foodDetail : foods.getData().getFoods()) {
-//                csvPrinter.printRecord(foodDetail.getFoodId(), foodDetail.getName(), foodDetail.getCategoryNo(), foodDetail.getCategory(), foodDetail.getCalories(), foodDetail.getProtein(), foodDetail.getSaturatedFat(), foodDetail.getTotalCarbohydrates(), foodDetail.getDietaryFiber());
-//            }
-//        } catch (IOException e) {
-//            throw new ServletException("Generate CSV failed");
-//        }
-//    }
-//
+
+    /* 下載CSV資料 */
+    @RequestMapping(value = "/tobuydl/{uid}/csv")
+    public void exportCsv(HttpServletResponse response, @PathVariable String uid) throws IOException, ServletException {
+        response.setContentType("text/csv");
+        response.setCharacterEncoding("UTF-8");
+        PrintWriter writer = response.getWriter();
+
+        // 獲取參數，例如 page、count 和 tobuyDateSortMode
+        int page = 1; // 適當設置默認值
+        int count = 10; // 適當設置默認值
+        int tobuyDateSortMode = 0; // 適當設置默認值
+
+        ToBuyPageResponse foods = getTobuyList(page, count, tobuyDateSortMode);
+        try (CSVPrinter csvPrinter = new CSVPrinter(writer, CSVFormat.DEFAULT)) {
+            csvPrinter.printRecord("編號","名稱", "採購日");
+            for (ToBuyEntity foodTobuy : foods.getData().getFoods()) {
+                csvPrinter.printRecord(foodTobuy.getTobuyId(), foodTobuy.getName(), foodTobuy.getTobuyDate());
+            }
+        } catch (IOException e) {
+            throw new ServletException("Generate CSV failed");
+        }
+    }
+
 //    /* 過期食物列表 */
 //    @RequestMapping(value = "/expfoodlist", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
 //    public FoodPageResponse searchExpFood(int page, int count, int expDateSortMode) {
