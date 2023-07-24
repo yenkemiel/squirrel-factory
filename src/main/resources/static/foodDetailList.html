@@ -494,11 +494,11 @@
         }
 
         // 重新打API排序
-        this.onGet();
-
+        if (this.keyword.length > 0) {
+          this.onSearch();
+        } else
+          this.onGet();
       }
-      
-      
 
     }
   }).use(ElementPlus).mount('#app')

@@ -413,7 +413,7 @@
                         if (response.data.code == 0) {
                             // 將API拿到的data存到Vue變數
                             this.total = response.data.data.total;
-                            this.foods = response.data.data;
+                            this.foods = response.data.data.foods;
                         } else if (response.data.code == 9) { // 未登入
                             location.href = "/index.html";
                         }

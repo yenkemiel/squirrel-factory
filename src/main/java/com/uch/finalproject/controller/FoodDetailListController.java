@@ -171,7 +171,7 @@ public class FoodDetailListController {
             }
 
             // 取得全部數量
-            rs = stmt.executeQuery("SELECT count(*) as c FROM food_stock f JOIN food_detail fd ON f.food_id = fd.food_id JOIN category c ON fd.category_no = c.category_no " +
+            rs = stmt.executeQuery("SELECT count(*) as c FROM food_detail fd JOIN food_stock ft ON ft.food_id = fd.food_id JOIN category c ON fd.category_no = c.category_no " +
                     "WHERE " + columnName + " LIKE '%" + keyword + "%'");
             rs.next();
             int total = rs.getInt("c");
